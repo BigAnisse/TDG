@@ -1,0 +1,39 @@
+Avenue Principale;Entrepot Base;Maison La Defense;0;0;200;0
+Avenue Principale;Maison La Defense;Maison Esplanade de La Defense;200;0;400;0
+Avenue Principale;Maison Esplanade de La Defense;Maison Pont de Neuilly;400;0;600;0
+Avenue Principale;Maison Pont de Neuilly;Place Centrale;600;0;800;0
+Avenue Principale;Place Centrale;Maison Les Sablons;800;0;1000;0
+Avenue Principale;Maison Les Sablons;Maison Porte Maillot;1000;0;1200;0
+
+Rue Montmartre;Maison La Defense;Immeuble Tour Montparnasse;200;0;200;200
+Rue Montmartre;Immeuble Tour Montparnasse;Immeuble Residence Saint Germain;200;200;200;400
+Rue Montmartre;Immeuble Residence Saint Germain;Maison Argentine;200;400;200;600
+Rue Montmartre;Maison Argentine;Immeuble Les Terrasses;200;600;200;800
+Rue Montmartre;Immeuble Les Terrasses;Maison Victor Hugo;200;800;200;1000
+
+Boulevard Nord;Maison Esplanade de La Defense;Maison Charles de Gaulle Etoile;400;0;400;200
+Boulevard Nord;Maison Charles de Gaulle Etoile;Immeuble Crystal Palace;400;200;400;400
+Boulevard Nord;Immeuble Crystal Palace;Maison Porte Dauphine;400;400;400;600
+Boulevard Nord;Maison Porte Dauphine;Immeuble Le Grand Hotel;400;600;400;800
+Boulevard Nord;Immeuble Le Grand Hotel;Immeuble Residence des Arts;400;800;400;1000
+
+Rue Transversale;Maison Pont de Neuilly;Maison Charles de Gaulle Etoile;600;0;400;200
+Rue Transversale;Maison Charles de Gaulle Etoile;Maison Argentine;400;200;200;400
+
+Avenue Est;Place Centrale;Immeuble Crystal Palace;800;0;400;400
+Avenue Est;Immeuble Crystal Palace;Place Centrale;400;400;800;0
+
+Rue Lafayette;Maison Les Sablons;Maison Porte Dauphine;1000;0;400;600
+Rue Lafayette;Maison Porte Dauphine;Immeuble Crystal Palace;400;600;400;400
+
+Boulevard Sud;Maison Porte Maillot;Immeuble Le Grand Hotel;1200;0;400;800
+Boulevard Sud;Immeuble Le Grand Hotel;Maison Porte Dauphine;400;800;400;600
+
+Rue Victor Hugo;Maison Victor Hugo;Immeuble Residence des Arts;200;1000;400;1000
+Rue Victor Hugo;Immeuble Residence des Arts;Immeuble Le Grand Hotel;400;1000;400;800
+
+Rue Circulaire;Immeuble Residence Saint Germain;Immeuble Tour Montparnasse;200;400;200;200
+Rue Circulaire;Immeuble Tour Montparnasse;Entrepot Base;200;200;0;0
+
+Avenue Retour;Immeuble Les Terrasses;Place Centrale;200;800;800;0
+Avenue Retour;Maison Argentine;Maison Pont de Neuilly;200;600;600;0
