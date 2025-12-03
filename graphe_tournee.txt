@@ -1,0 +1,29 @@
+digraph G {
+	rankdir=LR;
+	node [shape=box, style=rounded];
+
+	"Maison Les Sablons" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Immeuble Tour Montparnasse" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Immeuble Les Terrasses" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Maison Porte Maillot" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Place Centrale" [shape=circle, style=filled, fillcolor=lightgray];
+	"Maison Victor Hugo" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Maison Esplanade de La Defense" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Maison Pont de Neuilly" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Immeuble Residence des Arts" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Immeuble Le Grand Hotel" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Immeuble Residence Saint Germain" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Immeuble Crystal Palace" [shape=box, style="rounded,filled", fillcolor=lightyellow];
+	"Entrepot Base" [shape=diamond, style=filled, fillcolor=lightblue, color=blue, penwidth=2];
+	"Maison Porte Dauphine" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Maison Argentine" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Maison Charles de Gaulle Etoile" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+	"Maison La Defense" [shape=box, style="rounded,filled", fillcolor=lightgreen];
+
+	"Entrepot Base" -> "Maison La Defense" [label="1. Avenue Principale", color=red, penwidth=2];
+	"Maison La Defense" -> "Maison Esplanade de La Defense" [label="2. Avenue Principale", color=red, penwidth=2];
+	"Maison Esplanade de La Defense" -> "Maison Charles de Gaulle Etoile" [label="3. Boulevard Nord", color=red, penwidth=2];
+	"Maison Charles de Gaulle Etoile" -> "Immeuble Crystal Palace" [label="4. Boulevard Nord", color=red, penwidth=2];
+	"Immeuble Crystal Palace" -> "Place Centrale" [label="5. Avenue Est", color=red, penwidth=2];
+	"Place Centrale" -> "Maison Les Sablons" [label="6. Avenue Principale", color=red, penwidth=2];
+}
