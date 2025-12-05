@@ -1,39 +1,145 @@
-Avenue Principale;Entrepot Base;Maison La Defense;0;0;200;0
-Avenue Principale;Maison La Defense;Maison Esplanade de La Defense;200;0;400;0
-Avenue Principale;Maison Esplanade de La Defense;Maison Pont de Neuilly;400;0;600;0
-Avenue Principale;Maison Pont de Neuilly;Place Centrale;600;0;800;0
-Avenue Principale;Place Centrale;Maison Les Sablons;800;0;1000;0
-Avenue Principale;Maison Les Sablons;Maison Porte Maillot;1000;0;1200;0
+# PLAN DE LA VILLE - Système de collecte des déchets
+# Format: Nom_Rue;Point_Depart;Point_Arrivee;X_Depart;Y_Depart;X_Arrivee;Y_Arrivee
+# Les coordonnées permettent de positionner les points sur le graphe
 
-Rue Montmartre;Maison La Defense;Immeuble Tour Montparnasse;200;0;200;200
-Rue Montmartre;Immeuble Tour Montparnasse;Immeuble Residence Saint Germain;200;200;200;400
-Rue Montmartre;Immeuble Residence Saint Germain;Maison Argentine;200;400;200;600
-Rue Montmartre;Maison Argentine;Immeuble Les Terrasses;200;600;200;800
-Rue Montmartre;Immeuble Les Terrasses;Maison Victor Hugo;200;800;200;1000
+# ============ QUARTIER CENTRE ============
+# Avenue Principale (axe horizontal central)
+Avenue Principale;Entrepot Base;Carrefour République;0;500;200;500
+Avenue Principale;Carrefour République;Maison Belle Vue;200;500;300;500
+Avenue Principale;Maison Belle Vue;Carrefour Liberté;300;500;500;500
+Avenue Principale;Carrefour Liberté;Immeuble Les Jardins;500;500;600;500
+Avenue Principale;Immeuble Les Jardins;Carrefour Nation;600;500;800;500
+Avenue Principale;Carrefour Nation;Maison Soleil;800;500;900;500
+Avenue Principale;Maison Soleil;Carrefour Victor Hugo;900;500;1100;500
+Avenue Principale;Carrefour Victor Hugo;Maison Horizon;1100;500;1200;500
 
-Boulevard Nord;Maison Esplanade de La Defense;Maison Charles de Gaulle Etoile;400;0;400;200
-Boulevard Nord;Maison Charles de Gaulle Etoile;Immeuble Crystal Palace;400;200;400;400
-Boulevard Nord;Immeuble Crystal Palace;Maison Porte Dauphine;400;400;400;600
-Boulevard Nord;Maison Porte Dauphine;Immeuble Le Grand Hotel;400;600;400;800
-Boulevard Nord;Immeuble Le Grand Hotel;Immeuble Residence des Arts;400;800;400;1000
+# ============ QUARTIER NORD ============
+# Rue Montmartre (verticale nord)
+Rue Montmartre;Carrefour République;Maison Tour Eiffel;200;500;200;350
+Rue Montmartre;Maison Tour Eiffel;Carrefour Opéra;200;350;200;200
+Rue Montmartre;Carrefour Opéra;Immeuble Résidence Nord;200;200;200;100
+Rue Montmartre;Immeuble Résidence Nord;Maison Arc de Triomphe;200;100;200;0
 
-Rue Transversale;Maison Pont de Neuilly;Maison Charles de Gaulle Etoile;600;0;400;200
-Rue Transversale;Maison Charles de Gaulle Etoile;Maison Argentine;400;200;200;400
+# Boulevard Nord (horizontale haute)
+Boulevard Nord;Carrefour Opéra;Immeuble Grand Palais;200;200;400;200
+Boulevard Nord;Immeuble Grand Palais;Carrefour Champs Elysées;400;200;600;200
+Boulevard Nord;Carrefour Champs Elysées;Maison Montparnasse;600;200;800;200
+Boulevard Nord;Maison Montparnasse;Carrefour Concorde;800;200;1000;200
+Boulevard Nord;Carrefour Concorde;Immeuble Crystal Tower;1000;200;1200;200
 
-Avenue Est;Place Centrale;Immeuble Crystal Palace;800;0;400;400
-Avenue Est;Immeuble Crystal Palace;Place Centrale;400;400;800;0
+# Rue Lafayette (diagonale nord-est)
+Rue Lafayette;Carrefour Liberté;Carrefour Champs Elysées;500;500;600;200
+Rue Lafayette;Carrefour Champs Elysées;Maison Beauté;600;200;700;100
+Rue Lafayette;Maison Beauté;Carrefour Madeleine;700;100;900;50
 
-Rue Lafayette;Maison Les Sablons;Maison Porte Dauphine;1000;0;400;600
-Rue Lafayette;Maison Porte Dauphine;Immeuble Crystal Palace;400;600;400;400
+# Avenue Haussmann (horizontale nord)
+Avenue Haussmann;Carrefour Madeleine;Immeuble Le Parisien;900;50;1000;50
+Avenue Haussmann;Immeuble Le Parisien;Maison Élégance;1000;50;1100;50
+Avenue Haussmann;Maison Élégance;Carrefour Trocadéro;1100;50;1200;50
 
-Boulevard Sud;Maison Porte Maillot;Immeuble Le Grand Hotel;1200;0;400;800
-Boulevard Sud;Immeuble Le Grand Hotel;Maison Porte Dauphine;400;800;400;600
+# ============ QUARTIER SUD ============
+# Rue Saint Michel (verticale sud)
+Rue Saint Michel;Carrefour Liberté;Maison Panthéon;500;500;500;650
+Rue Saint Michel;Maison Panthéon;Carrefour Luxembourg;500;650;500;800
+Rue Saint Michel;Carrefour Luxembourg;Immeuble Tour Montparnasse;500;800;500;950
+Rue Saint Michel;Immeuble Tour Montparnasse;Maison Notre Dame;500;950;500;1100
 
-Rue Victor Hugo;Maison Victor Hugo;Immeuble Residence des Arts;200;1000;400;1000
-Rue Victor Hugo;Immeuble Residence des Arts;Immeuble Le Grand Hotel;400;1000;400;800
+# Boulevard Sud (horizontale basse)
+Boulevard Sud;Carrefour Luxembourg;Maison Jardin;500;800;700;800
+Boulevard Sud;Maison Jardin;Carrefour Invalides;700;800;900;800
+Boulevard Sud;Carrefour Invalides;Immeuble Résidence Sud;900;800;1100;800
+Boulevard Sud;Immeuble Résidence Sud;Carrefour Bastille;1100;800;1200;800
 
-Rue Circulaire;Immeuble Residence Saint Germain;Immeuble Tour Montparnasse;200;400;200;200
-Rue Circulaire;Immeuble Tour Montparnasse;Entrepot Base;200;200;0;0
+# Rue de Rivoli (diagonale sud-est)
+Rue de Rivoli;Carrefour Nation;Carrefour Invalides;800;500;900;800
+Rue de Rivoli;Carrefour Invalides;Maison Louvre;900;800;1000;900
 
-Avenue Retour;Immeuble Les Terrasses;Place Centrale;200;800;800;0
-Avenue Retour;Maison Argentine;Maison Pont de Neuilly;200;600;600;0
+# ============ QUARTIER EST ============
+# Avenue Est (verticale est)
+Avenue Est;Carrefour Nation;Immeuble Bercy;800;500;800;350
+Avenue Est;Immeuble Bercy;Carrefour Gare de Lyon;800;350;800;200
+Avenue Est;Carrefour Gare de Lyon;Maison Place de la République;800;200;800;100
+Avenue Est;Maison Place de la République;Carrefour Belleville;800;100;800;0
+
+# Rue de la Roquette (horizontale est)
+Rue de la Roquette;Carrefour Victor Hugo;Maison Voltaire;1100;500;1300;500
+Rue de la Roquette;Maison Voltaire;Carrefour Père Lachaise;1300;500;1500;500
+Rue de la Roquette;Carrefour Père Lachaise;Immeuble Résidence Est;1500;500;1600;500
+
+# Boulevard de Belleville (nord-est)
+Boulevard de Belleville;Carrefour Belleville;Maison Buttes Chaumont;800;0;1000;0
+Boulevard de Belleville;Maison Buttes Chaumont;Carrefour Colonel Fabien;1000;0;1200;0
+Boulevard de Belleville;Carrefour Colonel Fabien;Immeuble Le Moderne;1200;0;1400;0
+
+# ============ QUARTIER OUEST ============
+# Rue Transversale (diagonale ouest)
+Rue Transversale;Carrefour République;Maison Marais;200;500;100;400
+Rue Transversale;Maison Marais;Carrefour Saint Germain;100;400;0;300
+
+# Avenue de Neuilly (horizontale ouest)
+Avenue de Neuilly;Carrefour Opéra;Immeuble La Défense;200;200;0;200
+Avenue de Neuilly;Immeuble La Défense;Maison Porte Maillot;0;200;-100;200
+
+# Rue du Faubourg (verticale ouest)
+Rue du Faubourg;Carrefour Saint Germain;Maison Invalides Ouest;0;300;0;500
+Rue du Faubourg;Maison Invalides Ouest;Entrepot Base;0;500;0;500
+
+# ============ CONNEXIONS SUPPLÉMENTAIRES ============
+# Rue Circulaire Nord (connexions entre quartiers)
+Rue Circulaire Nord;Carrefour Champs Elysées;Carrefour Gare de Lyon;600;200;800;200
+Rue Circulaire Nord;Carrefour Gare de Lyon;Carrefour Concorde;800;200;1000;200
+
+# Rue Circulaire Sud (connexions sud)
+Rue Circulaire Sud;Carrefour Luxembourg;Maison Denfert;500;800;600;900
+Rue Circulaire Sud;Maison Denfert;Carrefour Invalides;600;900;700;800
+
+# Avenue Traversante (connexion est-ouest)
+Avenue Traversante;Carrefour Concorde;Carrefour Victor Hugo;1000;200;1100;500
+Avenue Traversante;Carrefour Victor Hugo;Carrefour Bastille;1100;500;1200;800
+
+# ============ ZONE RÉSIDENTIELLE NORD-OUEST ============
+Rue des Fleurs;Carrefour Opéra;Maison Rose;200;200;150;150
+Rue des Fleurs;Maison Rose;Immeuble Les Lilas;150;150;100;100
+Rue des Fleurs;Immeuble Les Lilas;Maison Tulipe;100;100;50;50
+
+Rue des Arbres;Maison Rose;Maison Chêne;150;150;250;100
+Rue des Arbres;Maison Chêne;Carrefour Madeleine;250;100;700;100
+
+# ============ ZONE RÉSIDENTIELLE SUD-EST ============
+Rue des Oiseaux;Carrefour Invalides;Maison Hirondelle;900;800;950;850
+Rue des Oiseaux;Maison Hirondelle;Immeuble Les Colombes;950;850;1000;900
+Rue des Oiseaux;Immeuble Les Colombes;Maison Rossignol;1000;900;1050;950
+
+Rue de la Paix;Maison Rossignol;Immeuble Belle Époque;1050;950;1100;1000
+Rue de la Paix;Immeuble Belle Époque;Carrefour Bastille;1100;1000;1100;800
+
+# ============ ZONE COMMERCIALE EST ============
+Boulevard Commerce;Carrefour Père Lachaise;Immeuble Centre Commercial;1500;500;1550;450
+Boulevard Commerce;Immeuble Centre Commercial;Maison Boutique;1550;450;1600;400
+Boulevard Commerce;Maison Boutique;Carrefour Marché;1600;400;1650;350
+
+Rue Marchande;Carrefour Marché;Immeuble Galeries;1650;350;1700;300
+Rue Marchande;Immeuble Galeries;Maison Epicerie;1700;300;1750;250
+
+# ============ ZONE INDUSTRIELLE NORD ============
+Rue Industrielle;Carrefour Colonel Fabien;Immeuble Usine Nord;1200;0;1300;-50
+Rue Industrielle;Immeuble Usine Nord;Maison Atelier;1300;-50;1400;-100
+
+Rue des Entrepôts;Carrefour Trocadéro;Immeuble Stock Nord;1200;50;1300;0
+Rue des Entrepôts;Immeuble Stock Nord;Carrefour Colonel Fabien;1300;0;1200;0
+
+# ============ QUARTIER PARC CENTRAL ============
+Allée des Jardins;Carrefour Liberté;Maison Parc;500;500;550;550
+Allée des Jardins;Maison Parc;Immeuble Vue Parc;550;550;600;600
+Allée des Jardins;Immeuble Vue Parc;Carrefour Luxembourg;600;600;500;800
+
+Promenade Verte;Carrefour Nation;Maison Fontaine;800;500;750;550
+Promenade Verte;Maison Fontaine;Immeuble Les Saules;750;550;700;600
+Promenade Verte;Immeuble Les Saules;Carrefour Luxembourg;700;600;500;800
+
+# ============ BOULEVARD PÉRIPHÉRIQUE (anneau extérieur) ============
+Périphérique Nord;Maison Arc de Triomphe;Carrefour Belleville;200;0;800;0
+Périphérique Est;Carrefour Belleville;Immeuble Le Moderne;800;0;1400;0
+Périphérique Sud Est;Carrefour Bastille;Maison Louvre;1200;800;1000;900
+Périphérique Sud;Maison Notre Dame;Carrefour Luxembourg;500;1100;500;800
+Périphérique Ouest;Maison Porte Maillot;Carrefour Saint Germain;-100;200;0;300

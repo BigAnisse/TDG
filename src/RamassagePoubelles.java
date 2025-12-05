@@ -3,7 +3,38 @@ import java.util.*;
 
 public class RamassagePoubelles {
     public static void main(String[] args) {
-        GrapheVille ville = new GrapheVille();
+        Scanner sc = new Scanner(System.in);
+
+        // Choisir l'hypothèse d'orientation
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("   CONFIGURATION INITIALE");
+        System.out.println("=".repeat(70));
+        System.out.println("\nChoisissez l'hypothèse d'orientation des rues :");
+        System.out.println("  1 - HO1 : Toutes rues à double sens, ramassage 2 côtés");
+        System.out.println("  2 - HO2 : Rues à sens unique possibles, ramassage 1 côté");
+        System.out.println("  3 - HO3 : Mixte (1 voie = 2 côtés, multi-voies = 1 côté)");
+        System.out.print("\nChoix (1-3) : ");
+
+        int choixHypothèse = sc.nextInt();
+        sc.nextLine();
+
+        OrientationRue.HypothèseOrientation hypothèse;
+        switch (choixHypothèse) {
+            case 1:
+                hypothèse = OrientationRue.HypothèseOrientation.HO1;
+                break;
+            case 2:
+                hypothèse = OrientationRue.HypothèseOrientation.HO2;
+                break;
+            case 3:
+                hypothèse = OrientationRue.HypothèseOrientation.HO3;
+                break;
+            default:
+                System.out.println("Choix invalide, utilisation de HO3 par défaut");
+                hypothèse = OrientationRue.HypothèseOrientation.HO3;
+        }
+
+        GrapheVilleAvance ville = new GrapheVilleAvance(hypothèse);
 
         try (Scanner fichier = new Scanner(new File("plan_ville.txt"))) {
             while (fichier.hasNextLine()) {
@@ -24,11 +55,36 @@ public class RamassagePoubelles {
 
                         ville.definirCoordonnees(depart, xDepart, yDepart);
                         ville.definirCoordonnees(arrivee, xArrivee, yArrivee);
-                    }
 
-                    ville.ajouterTroncon(rue, depart, arrivee);
+                        // Calculer durée basée sur distance
+                        double dx = xArrivee - xDepart;
+                        double dy = yArrivee - yDepart;
+                        double distance = Math.sqrt(dx * dx + dy * dy);
+                        double duree = distance / 100.0;
+
+                        ville.ajouterTronconOriente(rue, depart, arrivee, duree);
+                    } else {
+                        ville.ajouterTronconOriente(rue, depart, arrivee, 2.0);
+                    }
                 }
             }
+
+            // Configurer les orientations
+            OrientationRue orientations = OrientationRue.creerConfigurationTest(hypothèse);
+
+            // Ajouter contraintes horaires
+            ville.ajouterContrainteHoraire("Rue Montmartre", 7, 9);
+            ville.ajouterContrainteHoraire("Avenue Est", 12, 14);
+
+            // Générer événements aléatoires
+            ville.genererEvenementsAleatoires(3);
+
+            // Heure de départ
+            System.out.print("\n⏰ Heure de départ de la tournée (6-22) : ");
+            int heureDepart = sc.nextInt();
+            sc.nextLine();
+            ville.setHeureDepart(heureDepart);
+
             System.out.println("✓ Fichier plan_ville.txt chargé avec succès !");
         } catch (Exception e) {
             System.out.println("Erreur : " + e.getMessage());
@@ -43,28 +99,30 @@ public class RamassagePoubelles {
             ville.definirCoordonnees("Immeuble1", 100, 200);
             ville.definirCoordonnees("Maison3", 100, 300);
 
-            ville.ajouterTroncon("Rue1", "Entrepot Base", "Carrefour1", 3.0);
-            ville.ajouterTroncon("Rue1", "Carrefour1", "Maison1", 2.0);
-            ville.ajouterTroncon("Rue1", "Maison1", "Maison2", 1.5);
-            ville.ajouterTroncon("Rue1", "Maison2", "Carrefour2", 2.0);
-            ville.ajouterTroncon("Rue2", "Carrefour1", "Carrefour3", 3.0);
-            ville.ajouterTroncon("Rue2", "Carrefour3", "Immeuble1", 2.0);
-            ville.ajouterTroncon("Rue2", "Immeuble1", "Maison3", 1.5);
-            ville.ajouterTroncon("Rue3", "Carrefour2", "Carrefour3", 3.5);
+            ville.ajouterTronconOriente("Rue1", "Entrepot Base", "Carrefour1", 3.0);
+            ville.ajouterTronconOriente("Rue1", "Carrefour1", "Maison1", 2.0);
+            ville.ajouterTronconOriente("Rue1", "Maison1", "Maison2", 1.5);
+            ville.ajouterTronconOriente("Rue1", "Maison2", "Carrefour2", 2.0);
+            ville.ajouterTronconOriente("Rue2", "Carrefour1", "Carrefour3", 3.0);
+            ville.ajouterTronconOriente("Rue2", "Carrefour3", "Immeuble1", 2.0);
+            ville.ajouterTronconOriente("Rue2", "Immeuble1", "Maison3", 1.5);
+            ville.ajouterTronconOriente("Rue3", "Carrefour2", "Carrefour3", 3.5);
+
+            ville.setHeureDepart(8);
         }
 
         System.out.println("\n" + "=".repeat(70));
         System.out.println("   SYSTÈME DE GESTION DE COLLECTE DES DÉCHETS");
         System.out.println("=".repeat(70));
 
-        Scanner sc = new Scanner(System.in);
+        Scanner scc = new Scanner(System.in);
 
         while (true) {
             afficherMenu();
             System.out.print("Votre choix : ");
 
             int choix = sc.nextInt();
-            sc.nextLine();
+            scc.nextLine();
 
             try {
                 switch (choix) {
@@ -98,6 +156,18 @@ public class RamassagePoubelles {
                     case 10:
                         planificationAvecCapacite(sc);
                         break;
+                    case 11:
+                        ville.afficherEtatComplet(ville);
+                        break;
+                    case 12:
+                        changerHeure(ville, sc);
+                        break;
+                    case 13:
+                        ajouterEvenement(ville, sc);
+                        break;
+                    case 14:
+                        simulerTourneeAvecContraintes(ville, sc);
+                        break;
                     case 0:
                         System.out.println("\n" + "=".repeat(70));
                         System.out.println("Merci d'avoir utilisé le système de collecte !");
@@ -112,6 +182,8 @@ public class RamassagePoubelles {
             }
         }
     }
+
+
 
     private static void afficherMenu() {
         System.out.println("\n" + "=".repeat(70));
