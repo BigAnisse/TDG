@@ -3,38 +3,7 @@ import java.util.*;
 
 public class RamassagePoubelles {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        // Choisir l'hypothèse d'orientation
-        System.out.println("\n" + "=".repeat(70));
-        System.out.println("   CONFIGURATION INITIALE");
-        System.out.println("=".repeat(70));
-        System.out.println("\nChoisissez l'hypothèse d'orientation des rues :");
-        System.out.println("  1 - HO1 : Toutes rues à double sens, ramassage 2 côtés");
-        System.out.println("  2 - HO2 : Rues à sens unique possibles, ramassage 1 côté");
-        System.out.println("  3 - HO3 : Mixte (1 voie = 2 côtés, multi-voies = 1 côté)");
-        System.out.print("\nChoix (1-3) : ");
-
-        int choixHypothèse = sc.nextInt();
-        sc.nextLine();
-
-        OrientationRue.HypothèseOrientation hypothèse;
-        switch (choixHypothèse) {
-            case 1:
-                hypothèse = OrientationRue.HypothèseOrientation.HO1;
-                break;
-            case 2:
-                hypothèse = OrientationRue.HypothèseOrientation.HO2;
-                break;
-            case 3:
-                hypothèse = OrientationRue.HypothèseOrientation.HO3;
-                break;
-            default:
-                System.out.println("Choix invalide, utilisation de HO3 par défaut");
-                hypothèse = OrientationRue.HypothèseOrientation.HO3;
-        }
-
-        GrapheVilleAvance ville = new GrapheVilleAvance(hypothèse);
+        GrapheVille ville = new GrapheVille();
 
         try (Scanner fichier = new Scanner(new File("plan_ville.txt"))) {
             while (fichier.hasNextLine()) {
@@ -55,40 +24,14 @@ public class RamassagePoubelles {
 
                         ville.definirCoordonnees(depart, xDepart, yDepart);
                         ville.definirCoordonnees(arrivee, xArrivee, yArrivee);
-
-                        // Calculer durée basée sur distance
-                        double dx = xArrivee - xDepart;
-                        double dy = yArrivee - yDepart;
-                        double distance = Math.sqrt(dx * dx + dy * dy);
-                        double duree = distance / 100.0;
-
-                        ville.ajouterTronconOriente(rue, depart, arrivee, duree);
-                    } else {
-                        ville.ajouterTronconOriente(rue, depart, arrivee, 2.0);
                     }
+
+                    ville.ajouterTroncon(rue, depart, arrivee);
                 }
             }
-
-            // Configurer les orientations
-            OrientationRue orientations = OrientationRue.creerConfigurationTest(hypothèse);
-
-            // Ajouter contraintes horaires
-            ville.ajouterContrainteHoraire("Rue Montmartre", 7, 9);
-            ville.ajouterContrainteHoraire("Avenue Est", 12, 14);
-
-            // Générer événements aléatoires
-            ville.genererEvenementsAleatoires(3);
-
-            // Heure de départ
-            System.out.print("\n⏰ Heure de départ de la tournée (6-22) : ");
-            int heureDepart = sc.nextInt();
-            sc.nextLine();
-            ville.setHeureDepart(heureDepart);
-
-            System.out.println("✓ Fichier plan_ville.txt chargé avec succès !");
+            System.out.println("✅ Fichier plan_ville.txt chargé avec succès !");
         } catch (Exception e) {
-            System.out.println("Erreur : " + e.getMessage());
-            System.out.println("Chargement des données de test...");
+            System.out.println("⚠️  Erreur de chargement, utilisation des données de test...");
 
             ville.definirCoordonnees("Entrepot Base", 0, 0);
             ville.definirCoordonnees("Carrefour1", 100, 0);
@@ -99,30 +42,28 @@ public class RamassagePoubelles {
             ville.definirCoordonnees("Immeuble1", 100, 200);
             ville.definirCoordonnees("Maison3", 100, 300);
 
-            ville.ajouterTronconOriente("Rue1", "Entrepot Base", "Carrefour1", 3.0);
-            ville.ajouterTronconOriente("Rue1", "Carrefour1", "Maison1", 2.0);
-            ville.ajouterTronconOriente("Rue1", "Maison1", "Maison2", 1.5);
-            ville.ajouterTronconOriente("Rue1", "Maison2", "Carrefour2", 2.0);
-            ville.ajouterTronconOriente("Rue2", "Carrefour1", "Carrefour3", 3.0);
-            ville.ajouterTronconOriente("Rue2", "Carrefour3", "Immeuble1", 2.0);
-            ville.ajouterTronconOriente("Rue2", "Immeuble1", "Maison3", 1.5);
-            ville.ajouterTronconOriente("Rue3", "Carrefour2", "Carrefour3", 3.5);
-
-            ville.setHeureDepart(8);
+            ville.ajouterTroncon("Rue1", "Entrepot Base", "Carrefour1", 3.0);
+            ville.ajouterTroncon("Rue1", "Carrefour1", "Maison1", 2.0);
+            ville.ajouterTroncon("Rue1", "Maison1", "Maison2", 1.5);
+            ville.ajouterTroncon("Rue1", "Maison2", "Carrefour2", 2.0);
+            ville.ajouterTroncon("Rue2", "Carrefour1", "Carrefour3", 3.0);
+            ville.ajouterTroncon("Rue2", "Carrefour3", "Immeuble1", 2.0);
+            ville.ajouterTroncon("Rue2", "Immeuble1", "Maison3", 1.5);
+            ville.ajouterTroncon("Rue3", "Carrefour2", "Carrefour3", 3.5);
         }
 
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("   SYSTÈME DE GESTION DE COLLECTE DES DÉCHETS");
+        System.out.println("   🚛 SYSTÈME DE GESTION DE COLLECTE DES DÉCHETS 🗑️");
         System.out.println("=".repeat(70));
 
-        Scanner scc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
         while (true) {
             afficherMenu();
             System.out.print("Votre choix : ");
 
             int choix = sc.nextInt();
-            scc.nextLine();
+            sc.nextLine();
 
             try {
                 switch (choix) {
@@ -156,21 +97,9 @@ public class RamassagePoubelles {
                     case 10:
                         planificationAvecCapacite(sc);
                         break;
-                    case 11:
-                        ville.afficherEtatComplet(ville);
-                        break;
-                    case 12:
-                        changerHeure(ville, sc);
-                        break;
-                    case 13:
-                        ajouterEvenement(ville, sc);
-                        break;
-                    case 14:
-                        simulerTourneeAvecContraintes(ville, sc);
-                        break;
                     case 0:
                         System.out.println("\n" + "=".repeat(70));
-                        System.out.println("Merci d'avoir utilisé le système de collecte !");
+                        System.out.println("✅ Merci d'avoir utilisé le système de collecte !");
                         System.out.println("=".repeat(70));
                         System.exit(0);
                     default:
@@ -183,29 +112,27 @@ public class RamassagePoubelles {
         }
     }
 
-
-
     private static void afficherMenu() {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("MENU PRINCIPAL");
+        System.out.println("📋 MENU PRINCIPAL");
         System.out.println("=".repeat(70));
-        System.out.println("\n--- THÈME 1 : Ramassage aux pieds des habitations ---");
-        System.out.println("  1 - Afficher tous les points de la ville");
-        System.out.println("  2 - Trajet direct vers UNE maison (Problématique 1)");
-        System.out.println("  3 - Tournée de ramassage limitée - max 10 points (Problématique 1)");
-        System.out.println("  4 - Tournée complète - ramasser toutes les rues (Problématique 2)");
-        System.out.println("  5 - Visualiser le graphe complet");
+        System.out.println("\n--- 🏘️  THÈME 1 : Ramassage aux pieds des habitations ---");
+        System.out.println("  1 - 📍 Afficher tous les points de la ville");
+        System.out.println("  2 - 🎯 Trajet direct vers UNE maison (Problématique 1 - Hypothèse 1)");
+        System.out.println("  3 - 🔄 Tournée limitée - max 10 points (Problématique 1 - Hypothèse 2)");
+        System.out.println("  4 - 🌐 Tournée complète - toutes les rues (Problématique 2)");
+        System.out.println("  5 - 🗺️  Visualiser le graphe complet de la ville");
 
-        System.out.println("\n--- THÈME 2 : Optimisation des points de collecte ---");
-        System.out.println("  6 - Voyageur de commerce : Approche Plus Proche Voisin");
-        System.out.println("  7 - Voyageur de commerce : Approche MST");
-        System.out.println("  8 - Voyageur de commerce : MST avec capacités");
+        System.out.println("\n--- 📦 THÈME 2 : Optimisation des points de collecte ---");
+        System.out.println("  6 - 🔍 Voyageur de commerce : Plus Proche Voisin");
+        System.out.println("  7 - 🌳 Voyageur de commerce : Approche MST");
+        System.out.println("  8 - ⚖️  Voyageur de commerce : MST avec capacités");
 
-        System.out.println("\n--- THÈME 3 : Planification des secteurs ---");
-        System.out.println("  9 - Planifier les secteurs (sans capacité)");
-        System.out.println(" 10 - Planifier les secteurs (avec capacités)");
+        System.out.println("\n--- 📅 THÈME 3 : Planification des secteurs ---");
+        System.out.println("  9 - 🎨 Planifier les secteurs (sans capacité)");
+        System.out.println(" 10 - 📊 Planifier les secteurs (avec capacités)");
 
-        System.out.println("\n  0 - Quitter");
+        System.out.println("\n  0 - ❌ Quitter");
         System.out.println("=".repeat(70));
     }
 
@@ -213,7 +140,7 @@ public class RamassagePoubelles {
 
     private static void afficherPoints(GrapheVille ville) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("LISTE DES POINTS DE LA VILLE");
+        System.out.println("📍 LISTE DES POINTS DE LA VILLE");
         System.out.println("=".repeat(70));
 
         Set<String> nomsAffiches = new HashSet<>();
@@ -243,14 +170,14 @@ public class RamassagePoubelles {
         }
 
         if (!maisons.isEmpty()) {
-            System.out.println("\n🟢 MAISONS (" + maisons.size() + ") :");
+            System.out.println("\n🟢 MAISONS (" + maisons.size() + ") - Temps ramassage : 2 min");
             for (Noeud m : maisons) {
                 System.out.println("  " + m);
             }
         }
 
         if (!immeubles.isEmpty()) {
-            System.out.println("\n🟡 IMMEUBLES (" + immeubles.size() + ") :");
+            System.out.println("\n🟡 IMMEUBLES (" + immeubles.size() + ") - Temps ramassage : 5 min");
             for (Noeud i : immeubles) {
                 System.out.println("  " + i);
             }
@@ -268,7 +195,7 @@ public class RamassagePoubelles {
 
     private static void trajetDirectVersUneMaison(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("TRAJET DIRECT VERS UNE MAISON");
+        System.out.println("🎯 TRAJET DIRECT VERS UNE MAISON");
         System.out.println("=".repeat(70));
         System.out.print("Nom de la destination : ");
         String destination = sc.nextLine().trim();
@@ -276,16 +203,12 @@ public class RamassagePoubelles {
         Itineraire itin = RechercheItineraire.trajetDirect(ville, destination);
         System.out.println(itin);
 
-        System.out.print("\n📊 Voulez-vous visualiser ce trajet ? (o/n) : ");
-        String reponse = sc.nextLine().trim().toLowerCase();
-        if (reponse.equals("o") || reponse.equals("oui")) {
-            Affichage.exporterVersDot(ville, itin);
-        }
+        proposerVisualisation(ville, itin, sc, "graphe_trajet_direct.txt");
     }
 
     private static void tourneeRamassageLimitee(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("TOURNÉE DE RAMASSAGE (MAX 10 POINTS)");
+        System.out.println("🔄 TOURNÉE DE RAMASSAGE (MAX 10 POINTS)");
         System.out.println("=".repeat(70));
         System.out.println("Entrez les maisons à visiter (tapez 'fin' pour terminer)\n");
 
@@ -305,34 +228,26 @@ public class RamassagePoubelles {
         Itineraire itin = RechercheItineraire.tourneeRamassage(ville, maisonsAVisiter);
         System.out.println(itin);
 
-        System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
-        String reponse = sc.nextLine().trim().toLowerCase();
-        if (reponse.equals("o") || reponse.equals("oui")) {
-            Affichage.exporterTourneeVersDot(ville, itin);
-        }
+        proposerVisualisation(ville, itin, sc, "graphe_tournee_limitee.txt");
     }
 
     private static void tourneeCompleteRues(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("TOURNÉE COMPLÈTE - RAMASSER TOUTES LES RUES");
+        System.out.println("🌐 TOURNÉE COMPLÈTE - RAMASSER TOUTES LES RUES");
         System.out.println("=".repeat(70));
         System.out.println("Le camion va ramasser toutes les rues de la ville.");
         System.out.println("Ramassage uniquement du côté droit (sens de circulation).");
-        System.out.println("\nCalcul en cours...\n");
+        System.out.println("\n⏳ Calcul en cours...\n");
 
         Itineraire itinComplete = TourneeComplete.genererTourneeComplete(ville);
         System.out.println(itinComplete);
 
-        System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
-        String reponse = sc.nextLine().trim().toLowerCase();
-        if (reponse.equals("o") || reponse.equals("oui")) {
-            Affichage.exporterTourneeVersDot(ville, itinComplete);
-        }
+        proposerVisualisationTourneeComplete(ville, itinComplete, sc, "graphe_tournee_complete.txt");
     }
 
     private static void visualiserGraphe(GrapheVille ville) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("VISUALISATION DU GRAPHE COMPLET");
+        System.out.println("🗺️  VISUALISATION DU GRAPHE COMPLET");
         System.out.println("=".repeat(70));
         Affichage.exporterVersDot(ville);
     }
@@ -341,7 +256,7 @@ public class RamassagePoubelles {
 
     private static void voyageurCommerceProchevoisin(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("THÈME 2 - VOYAGEUR DE COMMERCE : PLUS PROCHE VOISIN");
+        System.out.println("🔍 THÈME 2 - VOYAGEUR DE COMMERCE : PLUS PROCHE VOISIN");
         System.out.println("=".repeat(70));
 
         List<String> points = saisirPointsCollecte(sc);
@@ -350,16 +265,12 @@ public class RamassagePoubelles {
         Itineraire itin = VoyageurCommerce.approcheProchevoisin(ville, points);
         System.out.println(itin);
 
-        System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
-        String reponse = sc.nextLine().trim().toLowerCase();
-        if (reponse.equals("o") || reponse.equals("oui")) {
-            Affichage.exporterTourneeVersDot(ville, itin);
-        }
+        proposerVisualisation(ville, itin, sc, "graphe_proche_voisin.txt");
     }
 
     private static void voyageurCommerceMST(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("THÈME 2 - VOYAGEUR DE COMMERCE : MST");
+        System.out.println("🌳 THÈME 2 - VOYAGEUR DE COMMERCE : MST");
         System.out.println("=".repeat(70));
 
         List<String> points = saisirPointsCollecte(sc);
@@ -368,16 +279,12 @@ public class RamassagePoubelles {
         Itineraire itin = VoyageurCommerce.approcheMST(ville, points);
         System.out.println(itin);
 
-        System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
-        String reponse = sc.nextLine().trim().toLowerCase();
-        if (reponse.equals("o") || reponse.equals("oui")) {
-            Affichage.exporterTourneeVersDot(ville, itin);
-        }
+        proposerVisualisation(ville, itin, sc, "graphe_mst.txt");
     }
 
     private static void voyageurCommerceMSTAvecCapacite(GrapheVille ville, Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("THÈME 2 - VOYAGEUR DE COMMERCE : MST AVEC CAPACITÉS");
+        System.out.println("⚖️  THÈME 2 - VOYAGEUR DE COMMERCE : MST AVEC CAPACITÉS");
         System.out.println("=".repeat(70));
 
         System.out.println("Entrez les points de collecte avec leurs contenances :");
@@ -414,12 +321,23 @@ public class RamassagePoubelles {
         List<Itineraire> tournees = VoyageurCommerce.approcheMSTAvecCapacite(ville, contenances, capacite);
 
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("RÉSULTATS DES TOURNÉES");
+        System.out.println("📊 RÉSULTATS DES TOURNÉES");
         System.out.println("=".repeat(70));
 
         for (int i = 0; i < tournees.size(); i++) {
-            System.out.println("\n--- TOURNÉE " + (i + 1) + " ---");
+            System.out.println("\n--- 🚛 TOURNÉE " + (i + 1) + " ---");
             System.out.println(tournees.get(i));
+        }
+
+        // Proposer visualisation pour chaque tournée
+        System.out.print("\n📊 Voulez-vous visualiser ces tournées ? (o/n) : ");
+        String reponse = sc.nextLine().trim().toLowerCase();
+        if (reponse.equals("o") || reponse.equals("oui")) {
+            for (int i = 0; i < tournees.size(); i++) {
+                String nomFichier = "graphe_mst_tournee_" + (i + 1) + ".txt";
+                Affichage.exporterVersDot(ville, tournees.get(i), nomFichier);
+                System.out.println("💡 Tournée " + (i + 1) + " générée dans : " + nomFichier);
+            }
         }
     }
 
@@ -446,7 +364,7 @@ public class RamassagePoubelles {
 
     private static void planificationSansCapacite(Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("THÈME 3 - PLANIFICATION DES SECTEURS (SANS CAPACITÉ)");
+        System.out.println("🎨 THÈME 3 - PLANIFICATION DES SECTEURS (SANS CAPACITÉ)");
         System.out.println("=".repeat(70));
 
         Map<String, PlanificationSecteurs.Secteur> secteurs = creerExempleSecteurs();
@@ -459,7 +377,7 @@ public class RamassagePoubelles {
 
     private static void planificationAvecCapacite(Scanner sc) {
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("THÈME 3 - PLANIFICATION DES SECTEURS (AVEC CAPACITÉS)");
+        System.out.println("📊 THÈME 3 - PLANIFICATION DES SECTEURS (AVEC CAPACITÉS)");
         System.out.println("=".repeat(70));
 
         Map<String, PlanificationSecteurs.Secteur> secteurs = creerExempleSecteurs();
@@ -489,7 +407,6 @@ public class RamassagePoubelles {
      * Crée un exemple de graphe de secteurs pour les tests
      */
     private static Map<String, PlanificationSecteurs.Secteur> creerExempleSecteurs() {
-        // Données des secteurs : [nom, quantité de déchets]
         List<String[]> donnees = Arrays.asList(
                 new String[]{"Secteur Nord", "15"},
                 new String[]{"Secteur Sud", "20"},
@@ -500,7 +417,6 @@ public class RamassagePoubelles {
                 new String[]{"Secteur Sud-Ouest", "14"}
         );
 
-        // Relations de voisinage : [secteur1, secteur2]
         List<String[]> relations = Arrays.asList(
                 new String[]{"Secteur Nord", "Secteur Centre"},
                 new String[]{"Secteur Nord", "Secteur Nord-Est"},
@@ -515,5 +431,36 @@ public class RamassagePoubelles {
         );
 
         return PlanificationSecteurs.creerGrapheSecteurs(donnees, relations);
+    }
+
+    // ============ MÉTHODES UTILITAIRES ============
+
+    /**
+     * Propose la visualisation du graphe avec l'itinéraire
+     */
+    private static void proposerVisualisation(GrapheVille ville, Itineraire itin, Scanner sc, String nomFichier) {
+        System.out.print("\n📊 Voulez-vous visualiser ce trajet sur le graphe ? (o/n) : ");
+        String reponse = sc.nextLine().trim().toLowerCase();
+        if (reponse.equals("o") || reponse.equals("oui")) {
+            Affichage.exporterVersDot(ville, itin, nomFichier);
+            System.out.println("💡 Le fichier généré est : " + nomFichier);
+        }
+    }
+
+    /**
+     * Propose la visualisation pour tournée complète
+     */
+    private static void proposerVisualisationTourneeComplete(GrapheVille ville, Itineraire itin, Scanner sc, String nomFichier) {
+        System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
+        String reponse = sc.nextLine().trim().toLowerCase();
+        if (reponse.equals("o") || reponse.equals("oui")) {
+            // Utiliser la bonne méthode selon le type d'itinéraire
+            if (itin instanceof ItineraireTourneeComplete) {
+                Affichage.exporterTourneeVersDot(ville, itin, nomFichier);
+            } else {
+                Affichage.exporterVersDot(ville, itin, nomFichier);
+            }
+            System.out.println("💡 Le fichier généré est : " + nomFichier);
+        }
     }
 }

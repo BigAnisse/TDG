@@ -9,7 +9,7 @@ Avenue Principale;Carrefour République;Maison Belle Vue;200;500;300;500
 Avenue Principale;Maison Belle Vue;Carrefour Liberté;300;500;500;500
 Avenue Principale;Carrefour Liberté;Immeuble Les Jardins;500;500;600;500
 Avenue Principale;Immeuble Les Jardins;Carrefour Nation;600;500;800;500
-Avenue Principale;Carrefour Nation;Maison Soleil;800;500;900;500
+Avenue Principale;Carrefour Nation;800;500;900;500
 Avenue Principale;Maison Soleil;Carrefour Victor Hugo;900;500;1100;500
 Avenue Principale;Carrefour Victor Hugo;Maison Horizon;1100;500;1200;500
 
