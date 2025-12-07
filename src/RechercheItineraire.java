@@ -31,6 +31,15 @@ class RechercheItineraire {
             throw new RuntimeException("Destination inconnue: " + nomArrivee);
         }
 
+        // AJOUT : Vérifier si c'est un GrapheVilleAvance
+        boolean avecContraintes = graphe instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) graphe : null;
+
+        if (avecContraintes) {
+            System.out.println("\n⏰ Calcul avec contraintes horaires");
+            villeAvance.getContraintes().afficherEtat();
+        }
+
         // Utiliser Dijkstra en ignorant les temps de ramassage
         Map<String, Double> distances = new HashMap<>();
         Map<String, Arc> predecesseurs = new HashMap<>();
@@ -65,12 +74,21 @@ class RechercheItineraire {
             }
 
             for (Arc arc : courant.getArcsSortants()) {
+                // AJOUT : Vérifier si l'arc est praticable
+                if (avecContraintes && !villeAvance.estArcPraticable(arc)) {
+                    continue;
+                }
+
                 Noeud voisin = arc.getArrivee();
 
                 if (traites.contains(voisin.getNom())) continue;
 
                 // Pour trajet direct: on ignore les temps de ramassage des maisons intermédiaires
-                double dureeSansRamassage = arc.getDuree() - voisin.getTempsTraitement();
+                // MODIFICATION : Utiliser durée avec contraintes
+                double dureeBase = avecContraintes ?
+                        villeAvance.calculerDureeAvecContraintes(arc) :
+                        arc.getDuree();
+                double dureeSansRamassage = dureeBase - voisin.getTempsTraitement();
                 double nouvelleDistance = distances.get(courant.getNom()) + dureeSansRamassage;
 
                 if (!distances.containsKey(voisin.getNom()) ||
@@ -86,7 +104,12 @@ class RechercheItineraire {
             throw new RuntimeException("Aucun chemin trouvé vers " + nomArrivee);
         }
 
+        if (avecContraintes) {
+            System.out.println("⏱️  Durée totale ajustée : " + String.format("%.1f", meilleureDistance) + " minutes");
+        }
+
         Itineraire itin = reconstruireChemin(depart, meilleurArrivee, predecesseurs);
+        itin.setVille(graphe); // AJOUT : Passer la référence au graphe
         // Marquer seulement la destination finale comme point de ramassage
         itin.ajouterMaisonARamasser(nomArrivee);
         return itin;
@@ -103,11 +126,21 @@ class RechercheItineraire {
             throw new RuntimeException("Entrepôt non trouvé");
         }
 
+        // AJOUT : Vérifier si c'est un GrapheVilleAvance
+        boolean avecContraintes = graphe instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) graphe : null;
+
+        if (avecContraintes) {
+            System.out.println("\n⏰ Calcul avec contraintes horaires");
+            villeAvance.getContraintes().afficherEtat();
+        }
+
         // On va construire une tournée qui passe par toutes les maisons
         // Algorithme simple: plus proche voisin
         Set<String> maisonsRestantes = new HashSet<>(maisonsAVisiter);
         List<Arc> cheminTotal = new ArrayList<>();
         Noeud positionActuelle = depart;
+        double tempsTotal = 0.0;
 
         while (!maisonsRestantes.isEmpty()) {
             // Trouver la maison la plus proche
@@ -118,7 +151,7 @@ class RechercheItineraire {
             for (String maison : maisonsRestantes) {
                 try {
                     // Chercher le chemin depuis la position actuelle
-                    Itineraire itinTemp = dijkstraDepuis(graphe, positionActuelle, maison, maisonsRestantes);
+                    Itineraire itinTemp = dijkstraDepuis(graphe, positionActuelle, maison, maisonsRestantes, villeAvance);
                     double distance = itinTemp.dureeTotal();
 
                     if (distance < distanceMin) {
@@ -137,17 +170,29 @@ class RechercheItineraire {
 
             // Ajouter ce chemin au chemin total
             cheminTotal.addAll(cheminVersMaison);
+            tempsTotal += distanceMin;
 
             // Mettre à jour la position
             if (!cheminVersMaison.isEmpty()) {
                 positionActuelle = cheminVersMaison.get(cheminVersMaison.size() - 1).getArrivee();
             }
 
+            // AJOUT : Avancer le temps
+            if (avecContraintes) {
+                villeAvance.avancerTemps(distanceMin);
+            }
+
             maisonsRestantes.remove(maisonLaPlusProche);
+        }
+
+        if (avecContraintes) {
+            System.out.println("\n⏰ Heure d'arrivée : " + villeAvance.getHeureActuelle() + "h00");
+            System.out.println("⏱️  Temps total ajusté : " + String.format("%.1f", tempsTotal) + " minutes");
         }
 
         // Construire l'itinéraire final
         Itineraire itin = new Itineraire(depart, positionActuelle);
+        itin.setVille(graphe); // AJOUT : Passer la référence au graphe
         for (Arc arc : cheminTotal) {
             itin.ajouterArc(arc);
         }
@@ -157,11 +202,14 @@ class RechercheItineraire {
     }
 
     // Dijkstra depuis un noeud quelconque
-    private static Itineraire dijkstraDepuis(GrapheVille graphe, Noeud depart, String nomArrivee, Set<String> maisonsARamasser) {
+    private static Itineraire dijkstraDepuis(GrapheVille graphe, Noeud depart, String nomArrivee,
+                                             Set<String> maisonsARamasser, GrapheVilleAvance villeAvance) {
         List<Noeud> noeudsArrivee = graphe.getToutesVersions(nomArrivee);
         if (noeudsArrivee.isEmpty()) {
             throw new RuntimeException("Destination inconnue: " + nomArrivee);
         }
+
+        boolean avecContraintes = villeAvance != null;
 
         Map<String, Double> distances = new HashMap<>();
         Map<String, Arc> predecesseurs = new HashMap<>();
@@ -196,12 +244,21 @@ class RechercheItineraire {
             }
 
             for (Arc arc : courant.getArcsSortants()) {
+                // AJOUT : Vérifier si l'arc est praticable
+                if (avecContraintes && !villeAvance.estArcPraticable(arc)) {
+                    continue;
+                }
+
                 Noeud voisin = arc.getArrivee();
 
                 if (traites.contains(voisin.getNom())) continue;
 
                 // Calculer la durée: inclure le ramassage SI c'est une maison à ramasser
-                double dureeArc = arc.getDuree();
+                // MODIFICATION : Utiliser durée avec contraintes
+                double dureeArc = avecContraintes ?
+                        villeAvance.calculerDureeAvecContraintes(arc) :
+                        arc.getDuree();
+
                 if ((voisin instanceof Maison || voisin instanceof Immeuble)
                         && !maisonsARamasser.contains(voisin.getNom())) {
                     // On passe par cette maison mais on ne ramasse pas

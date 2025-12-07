@@ -5,12 +5,23 @@ class Itineraire {
     private Noeud arrivee;
     private List<Arc> arcs;
     private Set<String> maisonsARamasser;
+    protected GrapheVille ville; // AJOUT : référence au graphe pour contraintes
 
     public Itineraire(Noeud depart, Noeud arrivee) {
         this.depart = depart;
         this.arrivee = arrivee;
         this.arcs = new ArrayList<>();
         this.maisonsARamasser = new HashSet<>();
+        this.ville = null;
+    }
+
+    // AJOUT : Constructeur avec référence au graphe
+    public Itineraire(Noeud depart, Noeud arrivee, GrapheVille ville) {
+        this.depart = depart;
+        this.arrivee = arrivee;
+        this.arcs = new ArrayList<>();
+        this.maisonsARamasser = new HashSet<>();
+        this.ville = ville;
     }
 
     public void ajouterArc(Arc arc) { arcs.add(arc); }
@@ -24,19 +35,32 @@ class Itineraire {
         this.maisonsARamasser = maisons;
     }
 
+    // AJOUT : Setter pour le graphe
+    public void setVille(GrapheVille ville) {
+        this.ville = ville;
+    }
+
     public double dureeTotal() {
+        boolean avecContraintes = ville instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) ville : null;
+
         double total = 0.0;
         for (Arc arc : arcs) {
             Noeud arrivee = arc.getArrivee();
             String nomArrivee = arrivee.getNom();
 
+            // MODIFICATION : Utiliser durée avec contraintes
+            double dureeArc = avecContraintes ?
+                    villeAvance.calculerDureeAvecContraintes(arc) :
+                    arc.getDuree();
+
             if (arrivee instanceof Maison || arrivee instanceof Immeuble) {
-                total += arc.getDuree() - arrivee.getTempsTraitement();
+                total += dureeArc - arrivee.getTempsTraitement();
                 if (maisonsARamasser.contains(nomArrivee)) {
                     total += arrivee.getTempsTraitement();
                 }
             } else {
-                total += arc.getDuree();
+                total += dureeArc;
             }
         }
         return total;
@@ -44,6 +68,9 @@ class Itineraire {
 
     @Override
     public String toString() {
+        boolean avecContraintes = ville instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) ville : null;
+
         StringBuilder sb = new StringBuilder();
         sb.append("\n=== ITINÉRAIRE DE RAMASSAGE ===\n");
 
@@ -68,7 +95,12 @@ class Itineraire {
 
         for (Arc arc : arcs) {
             Noeud noeudArrivee = arc.getArrivee();
-            tempsDepuisPoint += arc.getDuree();
+
+            // MODIFICATION : Utiliser durée avec contraintes
+            double dureeArc = avecContraintes ?
+                    villeAvance.calculerDureeAvecContraintes(arc) :
+                    arc.getDuree();
+            tempsDepuisPoint += dureeArc;
 
             if (!arc.estChangementRue()) {
                 rueActuelle = arc.getRue();
@@ -141,7 +173,13 @@ class Itineraire {
         }
 
         sb.append("\n--- Récapitulatif ---\n");
-        sb.append(String.format("Durée totale: %.1f minutes\n", dureeTotal()));
+        sb.append(String.format("Durée totale: %.1f minutes", dureeTotal()));
+
+        // AJOUT : Afficher si contraintes appliquées
+        if (avecContraintes) {
+            sb.append(" ⏰ (avec contraintes horaires)");
+        }
+        sb.append("\n");
 
         if (!maisonsARamasser.isEmpty()) {
             sb.append("Points de ramassage effectués: " + maisonsARamasser.size() + "\n");

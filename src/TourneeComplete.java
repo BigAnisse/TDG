@@ -16,11 +16,21 @@ class TourneeComplete {
     /**
      * Génère une tournée qui ramasse toutes les rues de la ville
      * Le camion ramasse uniquement du côté droit (sens de circulation)
+     * CORRECTION : Prend en compte les contraintes horaires
      */
     public static Itineraire genererTourneeComplete(GrapheVille ville) {
         Entrepot entrepot = ville.getEntrepot();
         if (entrepot == null) {
             throw new RuntimeException("Entrepôt non trouvé");
+        }
+
+        // AJOUT : Vérifier si c'est un GrapheVilleAvance
+        boolean avecContraintes = ville instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) ville : null;
+
+        if (avecContraintes) {
+            System.out.println("⏰ Prise en compte des contraintes horaires");
+            villeAvance.getContraintes().afficherEtat();
         }
 
         // Collecter tous les arcs à ramasser (en excluant les changements de rue)
@@ -30,6 +40,11 @@ class TourneeComplete {
         for (Noeud noeud : ville.getNoeuds()) {
             for (Arc arc : noeud.getArcsSortants()) {
                 if (!arc.estChangementRue()) {
+                    // AJOUT : Vérifier si l'arc est praticable
+                    if (avecContraintes && !villeAvance.estArcPraticable(arc)) {
+                        continue; // Ignorer les arcs non praticables
+                    }
+
                     String cle = arc.getCleDirectionnelle();
                     arcsARamasser.add(cle);
                     arcsParCle.put(cle, arc);
@@ -44,30 +59,51 @@ class TourneeComplete {
         List<ArcAParcourir> tournee = new ArrayList<>();
         Set<String> arcsRamasses = new HashSet<>();
         Noeud positionActuelle = entrepot;
+        double tempsTotal = 0.0;
 
         while (arcsRamasses.size() < arcsARamasser.size()) {
             // Chercher un arc non ramassé depuis la position actuelle
-            Arc arcNonRamasse = trouverArcNonRamasse(positionActuelle, arcsARamasser, arcsRamasses);
+            Arc arcNonRamasse = trouverArcNonRamasse(positionActuelle, arcsARamasser, arcsRamasses, villeAvance);
 
             if (arcNonRamasse != null) {
                 // On peut ramasser directement depuis notre position
+                double dureeArc = avecContraintes ?
+                        villeAvance.calculerDureeAvecContraintes(arcNonRamasse) :
+                        arcNonRamasse.getDuree();
+
                 tournee.add(new ArcAParcourir(arcNonRamasse, true));
                 arcsRamasses.add(arcNonRamasse.getCleDirectionnelle());
                 positionActuelle = arcNonRamasse.getArrivee();
+                tempsTotal += dureeArc;
+
+                // AJOUT : Avancer le temps
+                if (avecContraintes) {
+                    villeAvance.avancerTemps(dureeArc);
+                }
             } else {
                 // Il faut aller vers un arc non ramassé (sans ramasser en chemin)
-                Arc procheArcNonRamasse = trouverProcheArcNonRamasse(ville, positionActuelle, arcsARamasser, arcsRamasses);
+                Arc procheArcNonRamasse = trouverProcheArcNonRamasse(ville, positionActuelle, arcsARamasser, arcsRamasses, villeAvance);
 
                 if (procheArcNonRamasse == null) {
                     break; // Tous les arcs ont été ramassés
                 }
 
                 // Trouver le chemin le plus court vers cet arc
-                List<Arc> cheminVers = cheminLePlusCourt(ville, positionActuelle, procheArcNonRamasse.getDepart());
+                List<Arc> cheminVers = cheminLePlusCourt(ville, positionActuelle, procheArcNonRamasse.getDepart(), villeAvance);
 
                 // Ajouter le chemin (sans ramassage)
                 for (Arc arc : cheminVers) {
+                    double dureeArc = avecContraintes ?
+                            villeAvance.calculerDureeAvecContraintes(arc) :
+                            arc.getDuree();
+
                     tournee.add(new ArcAParcourir(arc, false));
+                    tempsTotal += dureeArc;
+
+                    // AJOUT : Avancer le temps
+                    if (avecContraintes) {
+                        villeAvance.avancerTemps(dureeArc);
+                    }
                 }
 
                 // Se positionner au début de l'arc non ramassé
@@ -78,16 +114,41 @@ class TourneeComplete {
                 }
 
                 // Ramasser cet arc
+                double dureeRamassage = avecContraintes ?
+                        villeAvance.calculerDureeAvecContraintes(procheArcNonRamasse) :
+                        procheArcNonRamasse.getDuree();
+
                 tournee.add(new ArcAParcourir(procheArcNonRamasse, true));
                 arcsRamasses.add(procheArcNonRamasse.getCleDirectionnelle());
                 positionActuelle = procheArcNonRamasse.getArrivee();
+                tempsTotal += dureeRamassage;
+
+                // AJOUT : Avancer le temps
+                if (avecContraintes) {
+                    villeAvance.avancerTemps(dureeRamassage);
+                }
             }
         }
 
         // Retourner à l'entrepôt
-        List<Arc> cheminRetour = cheminLePlusCourt(ville, positionActuelle, entrepot);
+        List<Arc> cheminRetour = cheminLePlusCourt(ville, positionActuelle, entrepot, villeAvance);
         for (Arc arc : cheminRetour) {
+            double dureeArc = avecContraintes ?
+                    villeAvance.calculerDureeAvecContraintes(arc) :
+                    arc.getDuree();
+
             tournee.add(new ArcAParcourir(arc, false));
+            tempsTotal += dureeArc;
+
+            // AJOUT : Avancer le temps
+            if (avecContraintes) {
+                villeAvance.avancerTemps(dureeArc);
+            }
+        }
+
+        if (avecContraintes) {
+            System.out.println("\n⏰ Heure d'arrivée : " + villeAvance.getHeureActuelle() + "h00");
+            System.out.println("⏱️  Temps total ajusté : " + String.format("%.1f", tempsTotal) + " minutes");
         }
 
         // Construire l'itinéraire final
@@ -95,9 +156,14 @@ class TourneeComplete {
     }
 
     // Trouve un arc non ramassé depuis le noeud actuel
-    private static Arc trouverArcNonRamasse(Noeud noeud, Set<String> tousArcs, Set<String> arcsRamasses) {
+    private static Arc trouverArcNonRamasse(Noeud noeud, Set<String> tousArcs, Set<String> arcsRamasses, GrapheVilleAvance villeAvance) {
         for (Arc arc : noeud.getArcsSortants()) {
             if (!arc.estChangementRue()) {
+                // AJOUT : Vérifier si l'arc est praticable
+                if (villeAvance != null && !villeAvance.estArcPraticable(arc)) {
+                    continue;
+                }
+
                 String cle = arc.getCleDirectionnelle();
                 if (tousArcs.contains(cle) && !arcsRamasses.contains(cle)) {
                     return arc;
@@ -109,18 +175,24 @@ class TourneeComplete {
 
     // Trouve l'arc non ramassé le plus proche
     private static Arc trouverProcheArcNonRamasse(GrapheVille ville, Noeud position,
-                                                  Set<String> tousArcs, Set<String> arcsRamasses) {
+                                                  Set<String> tousArcs, Set<String> arcsRamasses,
+                                                  GrapheVilleAvance villeAvance) {
         Arc plusProche = null;
         double distanceMin = Double.MAX_VALUE;
 
         for (Noeud noeud : ville.getNoeuds()) {
             for (Arc arc : noeud.getArcsSortants()) {
                 if (!arc.estChangementRue()) {
+                    // AJOUT : Vérifier si l'arc est praticable
+                    if (villeAvance != null && !villeAvance.estArcPraticable(arc)) {
+                        continue;
+                    }
+
                     String cle = arc.getCleDirectionnelle();
                     if (tousArcs.contains(cle) && !arcsRamasses.contains(cle)) {
                         // Calculer la distance de notre position au début de cet arc
-                        List<Arc> chemin = cheminLePlusCourt(ville, position, arc.getDepart());
-                        double distance = calculerDistance(chemin);
+                        List<Arc> chemin = cheminLePlusCourt(ville, position, arc.getDepart(), villeAvance);
+                        double distance = calculerDistance(chemin, villeAvance);
 
                         if (distance < distanceMin) {
                             distanceMin = distance;
@@ -135,7 +207,7 @@ class TourneeComplete {
     }
 
     // Calcule le chemin le plus court entre deux noeuds
-    private static List<Arc> cheminLePlusCourt(GrapheVille ville, Noeud depart, Noeud arrivee) {
+    private static List<Arc> cheminLePlusCourt(GrapheVille ville, Noeud depart, Noeud arrivee, GrapheVilleAvance villeAvance) {
         if (depart.equals(arrivee)) {
             return new ArrayList<>();
         }
@@ -160,10 +232,19 @@ class TourneeComplete {
             }
 
             for (Arc arc : courant.getArcsSortants()) {
+                // AJOUT : Vérifier si l'arc est praticable
+                if (villeAvance != null && !villeAvance.estArcPraticable(arc)) {
+                    continue;
+                }
+
                 Noeud voisin = arc.getArrivee();
                 if (traites.contains(voisin.getNom())) continue;
 
-                double nouvelleDist = distances.get(courant.getNom()) + arc.getDuree();
+                // AJOUT : Utiliser la durée avec contraintes
+                double dureeArc = villeAvance != null ?
+                        villeAvance.calculerDureeAvecContraintes(arc) :
+                        arc.getDuree();
+                double nouvelleDist = distances.get(courant.getNom()) + dureeArc;
 
                 if (!distances.containsKey(voisin.getNom()) || nouvelleDist < distances.get(voisin.getNom())) {
                     distances.put(voisin.getNom(), nouvelleDist);
@@ -189,10 +270,14 @@ class TourneeComplete {
     }
 
     // Calcule la distance totale d'un chemin
-    private static double calculerDistance(List<Arc> chemin) {
+    private static double calculerDistance(List<Arc> chemin, GrapheVilleAvance villeAvance) {
         double total = 0.0;
         for (Arc arc : chemin) {
-            total += arc.getDuree();
+            // AJOUT : Utiliser la durée avec contraintes
+            double duree = villeAvance != null ?
+                    villeAvance.calculerDureeAvecContraintes(arc) :
+                    arc.getDuree();
+            total += duree;
         }
         return total;
     }

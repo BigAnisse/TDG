@@ -16,6 +16,7 @@ public class RamassagePoubelles {
                     String rue = parts[0].trim();
                     String depart = parts[1].trim();
                     String arrivee = parts[2].trim();
+                    double duree = 2.0; // CORRECTION : Valeur par défaut
 
                     if (parts.length == 7) {
                         double xDepart = Double.parseDouble(parts[3].trim());
@@ -25,10 +26,16 @@ public class RamassagePoubelles {
 
                         ville.definirCoordonnees(depart, xDepart, yDepart);
                         ville.definirCoordonnees(arrivee, xArrivee, yArrivee);
+
+                        // CORRECTION : Calculer la durée basée sur la distance
+                        double dx = xArrivee - xDepart;
+                        double dy = yArrivee - yDepart;
+                        double distance = Math.sqrt(dx * dx + dy * dy);
+                        duree = distance / 100.0; // Conversion distance -> temps
                     }
 
-                    // MODIFICATION : Utiliser ajouterTronconOriente
-                    ville.ajouterTronconOriente(rue, depart, arrivee);
+                    // CORRECTION : Passer les 4 paramètres requis
+                    ville.ajouterTronconOriente(rue, depart, arrivee, duree);
                 }
             }
             System.out.println("✅ Fichier plan_ville.txt chargé avec succès !");
@@ -176,6 +183,11 @@ public class RamassagePoubelles {
         ville.genererEvenementsAleatoires(3);
 
         System.out.println("✅ Contraintes configurées !");
+        System.out.println("\n💡 REMARQUE : Les contraintes horaires affectent maintenant les calculs !");
+        System.out.println("   - Les heures de pointe ralentissent le trafic (×1.8 à ×2.0)");
+        System.out.println("   - Les événements aléatoires peuvent tripler le temps (×3.0)");
+        System.out.println("   - Les rues fermées sont évitées dans les calculs");
+        System.out.println("   - Modifier l'heure de départ change les résultats !");
     }
 
     /**

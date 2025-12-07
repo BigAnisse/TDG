@@ -45,7 +45,7 @@ class VoyageurCommerce {
                 for (Noeud noeudPoint : versions) {
                     try {
                         List<Arc> chemin = cheminLePlusCourt(ville, positionActuelle, noeudPoint);
-                        double distance = calculerDistance(chemin);
+                        double distance = calculerDistance(chemin, ville);
 
                         if (distance < distanceMin) {
                             distanceMin = distance;
@@ -76,7 +76,7 @@ class VoyageurCommerce {
         // Retour à l'entrepôt
         List<Arc> retour = cheminLePlusCourt(ville, positionActuelle, entrepot);
         cheminTotal.addAll(retour);
-        double distanceRetour = calculerDistance(retour);
+        double distanceRetour = calculerDistance(retour, ville);
         distanceTotale += distanceRetour;
 
         System.out.println("→ Retour à " + entrepot.getNom() + " (distance: " + String.format("%.1f", distanceRetour) + " min)");
@@ -84,6 +84,7 @@ class VoyageurCommerce {
 
         // Construire l'itinéraire
         Itineraire itin = new Itineraire(entrepot, entrepot);
+        itin.setVille(ville); // AJOUT
         for (Arc arc : cheminTotal) {
             itin.ajouterArc(arc);
         }
@@ -127,7 +128,7 @@ class VoyageurCommerce {
 
                     if (n1 != null && n2 != null) {
                         List<Arc> chemin = cheminLePlusCourt(ville, n1, n2);
-                        double distance = calculerDistance(chemin);
+                        double distance = calculerDistance(chemin, ville);
                         grapheComplet.get(p1).put(p2, distance);
                         chemins.get(p1).put(p2, chemin);
                     }
@@ -157,7 +158,7 @@ class VoyageurCommerce {
             List<Arc> segment = chemins.get(depart).get(arrivee);
             if (segment != null) {
                 cheminFinal.addAll(segment);
-                double dist = calculerDistance(segment);
+                double dist = calculerDistance(segment, ville);
                 distanceTotale += dist;
                 System.out.println(depart + " → " + arrivee + " (" + String.format("%.1f", dist) + " min)");
             }
@@ -167,6 +168,7 @@ class VoyageurCommerce {
 
         // Construire l'itinéraire
         Itineraire itin = new Itineraire(entrepot, entrepot);
+        itin.setVille(ville); // AJOUT
         for (Arc arc : cheminFinal) {
             itin.ajouterArc(arc);
         }
@@ -214,7 +216,7 @@ class VoyageurCommerce {
 
                     if (n1 != null && n2 != null) {
                         List<Arc> chemin = cheminLePlusCourt(ville, n1, n2);
-                        double distance = calculerDistance(chemin);
+                        double distance = calculerDistance(chemin, ville);
                         grapheComplet.get(p1).put(p2, distance);
                         chemins.get(p1).put(p2, chemin);
                     }
@@ -253,6 +255,7 @@ class VoyageurCommerce {
 
                 // Créer l'itinéraire de la tournée
                 Itineraire itin = new Itineraire(entrepot, entrepot);
+                itin.setVille(ville); // AJOUT
                 for (Arc arc : tourneeActuelle) {
                     itin.ajouterArc(arc);
                 }
@@ -293,6 +296,7 @@ class VoyageurCommerce {
             tourneeActuelle.addAll(retour);
 
             Itineraire itin = new Itineraire(entrepot, entrepot);
+            itin.setVille(ville); // AJOUT
             for (Arc arc : tourneeActuelle) {
                 itin.ajouterArc(arc);
             }
@@ -320,6 +324,10 @@ class VoyageurCommerce {
             return new ArrayList<>();
         }
 
+        // AJOUT : Gérer les contraintes
+        boolean avecContraintes = ville instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) ville : null;
+
         Map<String, Double> distances = new HashMap<>();
         Map<String, Arc> predecesseurs = new HashMap<>();
         Set<String> traites = new HashSet<>();
@@ -340,10 +348,19 @@ class VoyageurCommerce {
             }
 
             for (Arc arc : courant.getArcsSortants()) {
+                // AJOUT : Vérifier si praticable
+                if (avecContraintes && !villeAvance.estArcPraticable(arc)) {
+                    continue;
+                }
+
                 Noeud voisin = arc.getArrivee();
                 if (traites.contains(voisin.getNom())) continue;
 
-                double dureeSansRamassage = arc.getDuree() - voisin.getTempsTraitement();
+                // AJOUT : Utiliser durée avec contraintes
+                double dureeBase = avecContraintes ?
+                        villeAvance.calculerDureeAvecContraintes(arc) :
+                        arc.getDuree();
+                double dureeSansRamassage = dureeBase - voisin.getTempsTraitement();
                 double nouvelleDist = distances.get(courant.getNom()) + dureeSansRamassage;
 
                 if (!distances.containsKey(voisin.getNom()) || nouvelleDist < distances.get(voisin.getNom())) {
@@ -369,10 +386,16 @@ class VoyageurCommerce {
         return chemin;
     }
 
-    private static double calculerDistance(List<Arc> chemin) {
+    private static double calculerDistance(List<Arc> chemin, GrapheVille ville) {
+        boolean avecContraintes = ville instanceof GrapheVilleAvance;
+        GrapheVilleAvance villeAvance = avecContraintes ? (GrapheVilleAvance) ville : null;
+
         double total = 0.0;
         for (Arc arc : chemin) {
-            total += arc.getDuree() - arc.getArrivee().getTempsTraitement();
+            double duree = avecContraintes ?
+                    villeAvance.calculerDureeAvecContraintes(arc) :
+                    arc.getDuree();
+            total += duree - arc.getArrivee().getTempsTraitement();
         }
         return total;
     }
