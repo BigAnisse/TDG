@@ -3,7 +3,8 @@ import java.util.*;
 
 public class RamassagePoubelles {
     public static void main(String[] args) {
-        GrapheVille ville = new GrapheVille();
+        // MODIFICATION : Utiliser GrapheVilleAvance au lieu de GrapheVille
+        GrapheVilleAvance ville = new GrapheVilleAvance(OrientationRue.HypothèseOrientation.HO3);
 
         try (Scanner fichier = new Scanner(new File("plan_ville.txt"))) {
             while (fichier.hasNextLine()) {
@@ -26,10 +27,15 @@ public class RamassagePoubelles {
                         ville.definirCoordonnees(arrivee, xArrivee, yArrivee);
                     }
 
-                    ville.ajouterTroncon(rue, depart, arrivee);
+                    // MODIFICATION : Utiliser ajouterTronconOriente
+                    ville.ajouterTronconOriente(rue, depart, arrivee);
                 }
             }
             System.out.println("✅ Fichier plan_ville.txt chargé avec succès !");
+
+            // AJOUT : Configurer des contraintes horaires réalistes
+            configurerContraintes(ville);
+
         } catch (Exception e) {
             System.out.println("⚠️  Erreur de chargement, utilisation des données de test...");
 
@@ -42,14 +48,16 @@ public class RamassagePoubelles {
             ville.definirCoordonnees("Immeuble1", 100, 200);
             ville.definirCoordonnees("Maison3", 100, 300);
 
-            ville.ajouterTroncon("Rue1", "Entrepot Base", "Carrefour1", 3.0);
-            ville.ajouterTroncon("Rue1", "Carrefour1", "Maison1", 2.0);
-            ville.ajouterTroncon("Rue1", "Maison1", "Maison2", 1.5);
-            ville.ajouterTroncon("Rue1", "Maison2", "Carrefour2", 2.0);
-            ville.ajouterTroncon("Rue2", "Carrefour1", "Carrefour3", 3.0);
-            ville.ajouterTroncon("Rue2", "Carrefour3", "Immeuble1", 2.0);
-            ville.ajouterTroncon("Rue2", "Immeuble1", "Maison3", 1.5);
-            ville.ajouterTroncon("Rue3", "Carrefour2", "Carrefour3", 3.5);
+            ville.ajouterTronconOriente("Rue1", "Entrepot Base", "Carrefour1", 3.0);
+            ville.ajouterTronconOriente("Rue1", "Carrefour1", "Maison1", 2.0);
+            ville.ajouterTronconOriente("Rue1", "Maison1", "Maison2", 1.5);
+            ville.ajouterTronconOriente("Rue1", "Maison2", "Carrefour2", 2.0);
+            ville.ajouterTronconOriente("Rue2", "Carrefour1", "Carrefour3", 3.0);
+            ville.ajouterTronconOriente("Rue2", "Carrefour3", "Immeuble1", 2.0);
+            ville.ajouterTronconOriente("Rue2", "Immeuble1", "Maison3", 1.5);
+            ville.ajouterTronconOriente("Rue3", "Carrefour2", "Carrefour3", 3.5);
+
+            configurerContraintes(ville);
         }
 
         System.out.println("\n" + "=".repeat(70));
@@ -97,6 +105,15 @@ public class RamassagePoubelles {
                     case 10:
                         planificationAvecCapacite(sc);
                         break;
+                    case 11:
+                        afficherContraintes(ville, sc);
+                        break;
+                    case 12:
+                        modifierHeure(ville, sc);
+                        break;
+                    case 13:
+                        genererEvenements(ville, sc);
+                        break;
                     case 0:
                         System.out.println("\n" + "=".repeat(70));
                         System.out.println("✅ Merci d'avoir utilisé le système de collecte !");
@@ -132,8 +149,82 @@ public class RamassagePoubelles {
         System.out.println("  9 - 🎨 Planifier les secteurs (sans capacité)");
         System.out.println(" 10 - 📊 Planifier les secteurs (avec capacités)");
 
+        System.out.println("\n--- ⏰ CONTRAINTES HORAIRES ---");
+        System.out.println(" 11 - 📋 Afficher l'état des contraintes horaires");
+        System.out.println(" 12 - 🕐 Modifier l'heure de départ");
+        System.out.println(" 13 - 🎲 Générer des événements aléatoires");
+
         System.out.println("\n  0 - ❌ Quitter");
         System.out.println("=".repeat(70));
+    }
+
+    /**
+     * Configure les contraintes horaires de la ville
+     */
+    private static void configurerContraintes(GrapheVilleAvance ville) {
+        System.out.println("\n⏰ Configuration des contraintes horaires...");
+
+        // Configurer l'heure de départ (8h du matin)
+        ville.setHeureDepart(8);
+
+        // Ajouter des contraintes horaires réalistes
+        ville.ajouterContrainteHoraire("Rue Montmartre", 7, 9);  // Fermée 7h-9h (livraisons)
+        ville.ajouterContrainteHoraire("Avenue de Neuilly", 12, 14);  // Fermée 12h-14h (marché)
+        ville.ajouterContrainteHoraire("Boulevard Commerce", 8, 10);  // Fermée 8h-10h (zone commerciale)
+
+        // Générer quelques événements aléatoires
+        ville.genererEvenementsAleatoires(3);
+
+        System.out.println("✅ Contraintes configurées !");
+    }
+
+    /**
+     * Affiche l'état actuel des contraintes
+     */
+    private static void afficherContraintes(GrapheVilleAvance ville, Scanner sc) {
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("⏰ ÉTAT DES CONTRAINTES HORAIRES");
+        System.out.println("=".repeat(70));
+
+        ville.afficherEtatComplet();
+    }
+
+    /**
+     * Modifie l'heure de départ
+     */
+    private static void modifierHeure(GrapheVilleAvance ville, Scanner sc) {
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("🕐 MODIFICATION DE L'HEURE");
+        System.out.println("=".repeat(70));
+        System.out.print("Nouvelle heure de départ (6-22) : ");
+        int heure = sc.nextInt();
+        sc.nextLine();
+
+        if (heure >= 6 && heure <= 22) {
+            ville.setHeureDepart(heure);
+            System.out.println("✅ Heure définie à " + heure + "h00");
+            ville.getContraintes().afficherEtat();
+        } else {
+            System.out.println("❌ Heure invalide (doit être entre 6h et 22h)");
+        }
+    }
+
+    /**
+     * Génère de nouveaux événements aléatoires
+     */
+    private static void genererEvenements(GrapheVilleAvance ville, Scanner sc) {
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("🎲 GÉNÉRATION D'ÉVÉNEMENTS ALÉATOIRES");
+        System.out.println("=".repeat(70));
+        System.out.print("Nombre d'événements à générer : ");
+        int nb = sc.nextInt();
+        sc.nextLine();
+
+        ville.getContraintes().reinitialiserEvenements();
+        ville.genererEvenementsAleatoires(nb);
+
+        System.out.println("\n✅ " + nb + " événements générés !");
+        ville.getContraintes().afficherEtat();
     }
 
     // ============ THÈME 1 ============
@@ -329,7 +420,6 @@ public class RamassagePoubelles {
             System.out.println(tournees.get(i));
         }
 
-        // Proposer visualisation pour chaque tournée
         System.out.print("\n📊 Voulez-vous visualiser ces tournées ? (o/n) : ");
         String reponse = sc.nextLine().trim().toLowerCase();
         if (reponse.equals("o") || reponse.equals("oui")) {
@@ -396,16 +486,12 @@ public class RamassagePoubelles {
 
         System.out.println(planning);
 
-        // Validation
         boolean valide = PlanificationSecteurs.validerPlanning(planning, secteurs, capacite, nbCamions);
         if (valide) {
             System.out.println("\n✅ Le planning respecte toutes les contraintes !");
         }
     }
 
-    /**
-     * Crée un exemple de graphe de secteurs pour les tests
-     */
     private static Map<String, PlanificationSecteurs.Secteur> creerExempleSecteurs() {
         List<String[]> donnees = Arrays.asList(
                 new String[]{"Secteur Nord", "15"},
@@ -435,9 +521,6 @@ public class RamassagePoubelles {
 
     // ============ MÉTHODES UTILITAIRES ============
 
-    /**
-     * Propose la visualisation du graphe avec l'itinéraire
-     */
     private static void proposerVisualisation(GrapheVille ville, Itineraire itin, Scanner sc, String nomFichier) {
         System.out.print("\n📊 Voulez-vous visualiser ce trajet sur le graphe ? (o/n) : ");
         String reponse = sc.nextLine().trim().toLowerCase();
@@ -447,14 +530,10 @@ public class RamassagePoubelles {
         }
     }
 
-    /**
-     * Propose la visualisation pour tournée complète
-     */
     private static void proposerVisualisationTourneeComplete(GrapheVille ville, Itineraire itin, Scanner sc, String nomFichier) {
         System.out.print("\n📊 Voulez-vous visualiser cette tournée ? (o/n) : ");
         String reponse = sc.nextLine().trim().toLowerCase();
         if (reponse.equals("o") || reponse.equals("oui")) {
-            // Utiliser la bonne méthode selon le type d'itinéraire
             if (itin instanceof ItineraireTourneeComplete) {
                 Affichage.exporterTourneeVersDot(ville, itin, nomFichier);
             } else {

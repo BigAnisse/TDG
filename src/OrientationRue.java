@@ -8,28 +8,25 @@ import java.util.*;
  */
 class OrientationRue {
 
-    // Types d'orientation
     enum TypeOrientation {
         DOUBLE_SENS_UNE_VOIE,      // Double sens 1 voie : ramassage 2 côtés
         DOUBLE_SENS_MULTI_VOIES,   // Double sens 2+ voies : ramassage 1 côté
         SENS_UNIQUE                 // Sens unique : ramassage 1 côté
     }
 
-    // Hypothèses d'orientation globale
     enum HypothèseOrientation {
         HO1,  // Toutes rues double sens, ramassage 2 côtés
         HO2,  // Graphe orienté, ramassage 1 côté
         HO3   // Graphe mixte selon nb voies
     }
 
-    // Configuration d'une rue
     static class ConfigurationRue {
         String nomRue;
         TypeOrientation type;
         int nombreVoies;
         boolean sensUnique;
-        String sensAutoriseDepart;  // Si sens unique : noeud de départ autorisé
-        String sensAutoriseArrivee; // Si sens unique : noeud d'arrivée autorisé
+        String sensAutoriseDepart;
+        String sensAutoriseArrivee;
         boolean ramassageDeuxCotes;
 
         public ConfigurationRue(String nomRue) {
@@ -40,9 +37,6 @@ class OrientationRue {
             this.ramassageDeuxCotes = false;
         }
 
-        /**
-         * Définir comme double sens avec 1 voie
-         */
         public void setDoubleSensUneVoie() {
             this.type = TypeOrientation.DOUBLE_SENS_UNE_VOIE;
             this.nombreVoies = 1;
@@ -50,9 +44,6 @@ class OrientationRue {
             this.ramassageDeuxCotes = true;
         }
 
-        /**
-         * Définir comme double sens avec plusieurs voies
-         */
         public void setDoubleSensMultiVoies(int nbVoies) {
             this.type = TypeOrientation.DOUBLE_SENS_MULTI_VOIES;
             this.nombreVoies = nbVoies;
@@ -60,9 +51,6 @@ class OrientationRue {
             this.ramassageDeuxCotes = false;
         }
 
-        /**
-         * Définir comme sens unique
-         */
         public void setSensUnique(String depart, String arrivee) {
             this.type = TypeOrientation.SENS_UNIQUE;
             this.nombreVoies = 1;
@@ -72,21 +60,15 @@ class OrientationRue {
             this.ramassageDeuxCotes = false;
         }
 
-        /**
-         * Vérifier si le passage est autorisé dans ce sens
-         */
         public boolean estPassageAutorise(String depart, String arrivee) {
             if (!sensUnique) return true;
             return depart.equals(sensAutoriseDepart) && arrivee.equals(sensAutoriseArrivee);
         }
 
-        /**
-         * Obtenir le symbole pour l'affichage
-         */
         public String getSymbole() {
             if (sensUnique) return "→";
-            if (ramassageDeuxCotes) return "⇄₁"; // Double sens 1 voie
-            return "⇄₂"; // Double sens multi-voies
+            if (ramassageDeuxCotes) return "⇄₁";
+            return "⇄₂";
         }
 
         @Override
@@ -109,7 +91,6 @@ class OrientationRue {
         }
     }
 
-    // Gestionnaire d'orientations
     private Map<String, ConfigurationRue> configurations;
     private HypothèseOrientation hypothèse;
 
@@ -118,9 +99,11 @@ class OrientationRue {
         this.hypothèse = hypothèse;
     }
 
-    /**
-     * Configurer une rue
-     */
+    // AJOUT : getter pour l'hypothèse
+    public HypothèseOrientation getHypothese() {
+        return hypothèse;
+    }
+
     public void configurerRue(String nomRue, TypeOrientation type) {
         ConfigurationRue config = configurations.computeIfAbsent(nomRue, ConfigurationRue::new);
 
@@ -132,65 +115,45 @@ class OrientationRue {
                 config.setDoubleSensMultiVoies(2);
                 break;
             case SENS_UNIQUE:
-                // Sens unique nécessite depart/arrivee
                 throw new IllegalArgumentException("Utilisez configurerSensUnique()");
         }
     }
 
-    /**
-     * Configurer une rue à sens unique
-     */
     public void configurerSensUnique(String nomRue, String depart, String arrivee) {
         ConfigurationRue config = configurations.computeIfAbsent(nomRue, ConfigurationRue::new);
         config.setSensUnique(depart, arrivee);
     }
 
-    /**
-     * Vérifier si le passage est autorisé
-     */
     public boolean estPassageAutorise(String nomRue, String depart, String arrivee) {
-        // En HO1, tous les passages sont autorisés
         if (hypothèse == HypothèseOrientation.HO1) {
             return true;
         }
 
         ConfigurationRue config = configurations.get(nomRue);
         if (config == null) {
-            // Par défaut : double sens
             return true;
         }
 
         return config.estPassageAutorise(depart, arrivee);
     }
 
-    /**
-     * Vérifier si le ramassage se fait des deux côtés
-     */
     public boolean ramassageDeuxCotes(String nomRue) {
-        // En HO1, toujours ramassage 2 côtés
         if (hypothèse == HypothèseOrientation.HO1) {
             return true;
         }
 
         ConfigurationRue config = configurations.get(nomRue);
         if (config == null) {
-            // Par défaut selon hypothèse
             return hypothèse == HypothèseOrientation.HO3;
         }
 
         return config.ramassageDeuxCotes;
     }
 
-    /**
-     * Obtenir la configuration d'une rue
-     */
     public ConfigurationRue getConfiguration(String nomRue) {
         return configurations.get(nomRue);
     }
 
-    /**
-     * Afficher toutes les configurations
-     */
     public void afficherConfigurations() {
         System.out.println("\n🚦 CONFIGURATION DES RUES (Hypothèse " + hypothèse + ")");
         System.out.println("=".repeat(70));
@@ -218,41 +181,27 @@ class OrientationRue {
         }
     }
 
-    /**
-     * Générer une configuration de test réaliste
-     */
     public static OrientationRue creerConfigurationTest(HypothèseOrientation hypothèse) {
         OrientationRue orientation = new OrientationRue(hypothèse);
 
         if (hypothèse == HypothèseOrientation.HO1) {
-            // HO1 : Tout en double sens, pas de config spécifique nécessaire
             System.out.println("Hypothèse HO1 : Configuration automatique (toutes rues à double sens)");
             return orientation;
         }
 
         if (hypothèse == HypothèseOrientation.HO2) {
-            // HO2 : Certaines rues à sens unique
             orientation.configurerSensUnique("Rue Montmartre", "Maison La Defense", "Immeuble Tour Montparnasse");
             orientation.configurerSensUnique("Boulevard Nord", "Maison Esplanade de La Defense", "Maison Charles de Gaulle Etoile");
-
-            // Les autres sont en double sens multi-voies
             orientation.configurerRue("Avenue Principale", TypeOrientation.DOUBLE_SENS_MULTI_VOIES);
             orientation.configurerRue("Rue Transversale", TypeOrientation.DOUBLE_SENS_MULTI_VOIES);
         }
 
         if (hypothèse == HypothèseOrientation.HO3) {
-            // HO3 : Mélange selon nombre de voies
-
-            // Grandes avenues : double sens multi-voies
             orientation.configurerRue("Avenue Principale", TypeOrientation.DOUBLE_SENS_MULTI_VOIES);
             orientation.configurerRue("Boulevard Nord", TypeOrientation.DOUBLE_SENS_MULTI_VOIES);
             orientation.configurerRue("Boulevard Sud", TypeOrientation.DOUBLE_SENS_MULTI_VOIES);
-
-            // Petites rues : double sens 1 voie (ramassage 2 côtés)
             orientation.configurerRue("Rue Lafayette", TypeOrientation.DOUBLE_SENS_UNE_VOIE);
             orientation.configurerRue("Rue Victor Hugo", TypeOrientation.DOUBLE_SENS_UNE_VOIE);
-
-            // Certaines rues à sens unique
             orientation.configurerSensUnique("Rue Montmartre", "Maison La Defense", "Immeuble Tour Montparnasse");
             orientation.configurerSensUnique("Avenue Est", "Place Centrale", "Immeuble Crystal Palace");
         }
@@ -260,9 +209,6 @@ class OrientationRue {
         return orientation;
     }
 
-    /**
-     * Compter le nombre d'arcs à ramasser selon l'orientation
-     */
     public int compterArcsARamasser(GrapheVille ville) {
         int count = 0;
         Set<String> arcsVus = new HashSet<>();
@@ -276,10 +222,8 @@ class OrientationRue {
                 if (arcsVus.contains(cleArc)) continue;
                 arcsVus.add(cleArc);
 
-                // En HO1, chaque rue compte pour 1 (ramassage 2 côtés en un passage)
                 if (hypothèse == HypothèseOrientation.HO1) {
                     if (ramassageDeuxCotes(arc.getRue())) {
-                        // Marquer aussi la direction inverse comme vue
                         String cleInverse = arc.getRue() + ":" + arc.getArrivee().getNom() + "->" + arc.getDepart().getNom();
                         arcsVus.add(cleInverse);
                     }
@@ -292,16 +236,10 @@ class OrientationRue {
         return count;
     }
 
-    /**
-     * Obtenir la liste des rues configurées
-     */
     public List<String> getRuesConfigurees() {
         return new ArrayList<>(configurations.keySet());
     }
 
-    /**
-     * Statistiques sur les orientations
-     */
     public String getStatistiques() {
         int sensUnique = 0;
         int doubleSens1Voie = 0;

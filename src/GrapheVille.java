@@ -3,7 +3,7 @@ import java.util.*;
 class GrapheVille {
     private Map<String, Noeud> noeuds;
     private Map<String, Noeud> noeudsOriginaux;
-    private Map<String, double[]> coordonnees; // Stocke les coordonnées x,y par nom
+    private Map<String, double[]> coordonnees;
     private Entrepot entrepot;
 
     private static final double DUREE_MIN = 1.0;
@@ -19,15 +19,12 @@ class GrapheVille {
         random = new Random();
     }
 
-    // Enregistrer les coordonnées d'un noeud
     public void definirCoordonnees(String nom, double x, double y) {
         coordonnees.put(nom, new double[]{x, y});
     }
 
-    // Obtenir les coordonnées (ou générer aléatoirement si pas définies)
     private double[] getCoordonnees(String nom) {
         if (!coordonnees.containsKey(nom)) {
-            // Générer des coordonnées aléatoires si non définies
             double x = random.nextDouble() * 1000;
             double y = random.nextDouble() * 1000;
             coordonnees.put(nom, new double[]{x, y});
@@ -69,6 +66,10 @@ class GrapheVille {
         ajouterTroncon(rue, nomDepart, nomArrivee, duree);
     }
 
+    /**
+     * CORRECTION : Ajoute un arc directionnel (une seule direction)
+     * Pour une route bidirectionnelle, cette méthode doit être appelée 2 fois
+     */
     public void ajouterTroncon(String rue, String nomDepart, String nomArrivee, double duree) {
         Noeud n1Original = getOuCreerNoeud(nomDepart);
         Noeud n2Original = getOuCreerNoeud(nomArrivee);
@@ -79,6 +80,7 @@ class GrapheVille {
         Noeud n1 = n1Original;
         Noeud n2 = n2Original;
 
+        // CORRECTION : Créer des versions spécifiques par rue SEULEMENT pour les carrefours
         if (n1Original instanceof Carrefour && !(n1Original instanceof Entrepot)) {
             String cleN1 = nomDepart + "_" + rue;
             if (!noeuds.containsKey(cleN1)) {
@@ -103,10 +105,12 @@ class GrapheVille {
             }
         }
 
+        // IMPORTANT : Créer l'arc de n1 vers n2 (une seule direction)
         double dureeAvecTraitement = duree + n2.getTempsTraitement();
         Arc arc = new Arc(n1, n2, rue, dureeAvecTraitement);
         n1.ajouterArc(arc);
 
+        // Créer les changements de rue aux carrefours
         creerChangementsRue(nomDepart);
         creerChangementsRue(nomArrivee);
     }

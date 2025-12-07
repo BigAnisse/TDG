@@ -3,143 +3,230 @@
 # Les coordonnées permettent de positionner les points sur le graphe
 
 # ============ QUARTIER CENTRE ============
-# Avenue Principale (axe horizontal central)
+# Avenue Principale (axe horizontal central) - DOUBLE SENS
 Avenue Principale;Entrepot Base;Carrefour République;0;500;200;500
+Avenue Principale;Carrefour République;Entrepot Base;200;500;0;500
 Avenue Principale;Carrefour République;Maison Belle Vue;200;500;300;500
+Avenue Principale;Maison Belle Vue;Carrefour République;300;500;200;500
 Avenue Principale;Maison Belle Vue;Carrefour Liberté;300;500;500;500
+Avenue Principale;Carrefour Liberté;Maison Belle Vue;500;500;300;500
 Avenue Principale;Carrefour Liberté;Immeuble Les Jardins;500;500;600;500
+Avenue Principale;Immeuble Les Jardins;Carrefour Liberté;600;500;500;500
 Avenue Principale;Immeuble Les Jardins;Carrefour Nation;600;500;800;500
+Avenue Principale;Carrefour Nation;Immeuble Les Jardins;800;500;600;500
 Avenue Principale;Carrefour Nation;800;500;900;500
+Avenue Principale;800;Carrefour Nation;900;500;800;500
 Avenue Principale;Maison Soleil;Carrefour Victor Hugo;900;500;1100;500
+Avenue Principale;Carrefour Victor Hugo;Maison Soleil;1100;500;900;500
 Avenue Principale;Carrefour Victor Hugo;Maison Horizon;1100;500;1200;500
+Avenue Principale;Maison Horizon;Carrefour Victor Hugo;1200;500;1100;500
 
 # ============ QUARTIER NORD ============
-# Rue Montmartre (verticale nord)
+# Rue Montmartre (verticale nord) - SENS UNIQUE (descente uniquement)
 Rue Montmartre;Carrefour République;Maison Tour Eiffel;200;500;200;350
 Rue Montmartre;Maison Tour Eiffel;Carrefour Opéra;200;350;200;200
 Rue Montmartre;Carrefour Opéra;Immeuble Résidence Nord;200;200;200;100
 Rue Montmartre;Immeuble Résidence Nord;Maison Arc de Triomphe;200;100;200;0
 
-# Boulevard Nord (horizontale haute)
+# Boulevard Nord (horizontale haute) - DOUBLE SENS
 Boulevard Nord;Carrefour Opéra;Immeuble Grand Palais;200;200;400;200
+Boulevard Nord;Immeuble Grand Palais;Carrefour Opéra;400;200;200;200
 Boulevard Nord;Immeuble Grand Palais;Carrefour Champs Elysées;400;200;600;200
+Boulevard Nord;Carrefour Champs Elysées;Immeuble Grand Palais;600;200;400;200
 Boulevard Nord;Carrefour Champs Elysées;Maison Montparnasse;600;200;800;200
+Boulevard Nord;Maison Montparnasse;Carrefour Champs Elysées;800;200;600;200
 Boulevard Nord;Maison Montparnasse;Carrefour Concorde;800;200;1000;200
+Boulevard Nord;Carrefour Concorde;Maison Montparnasse;1000;200;800;200
 Boulevard Nord;Carrefour Concorde;Immeuble Crystal Tower;1000;200;1200;200
+Boulevard Nord;Immeuble Crystal Tower;Carrefour Concorde;1200;200;1000;200
 
-# Rue Lafayette (diagonale nord-est)
+# Rue Lafayette (diagonale nord-est) - DOUBLE SENS
 Rue Lafayette;Carrefour Liberté;Carrefour Champs Elysées;500;500;600;200
+Rue Lafayette;Carrefour Champs Elysées;Carrefour Liberté;600;200;500;500
 Rue Lafayette;Carrefour Champs Elysées;Maison Beauté;600;200;700;100
+Rue Lafayette;Maison Beauté;Carrefour Champs Elysées;700;100;600;200
 Rue Lafayette;Maison Beauté;Carrefour Madeleine;700;100;900;50
+Rue Lafayette;Carrefour Madeleine;Maison Beauté;900;50;700;100
 
-# Avenue Haussmann (horizontale nord)
+# Avenue Haussmann (horizontale nord) - DOUBLE SENS
 Avenue Haussmann;Carrefour Madeleine;Immeuble Le Parisien;900;50;1000;50
+Avenue Haussmann;Immeuble Le Parisien;Carrefour Madeleine;1000;50;900;50
 Avenue Haussmann;Immeuble Le Parisien;Maison Élégance;1000;50;1100;50
+Avenue Haussmann;Maison Élégance;Immeuble Le Parisien;1100;50;1000;50
 Avenue Haussmann;Maison Élégance;Carrefour Trocadéro;1100;50;1200;50
+Avenue Haussmann;Carrefour Trocadéro;Maison Élégance;1200;50;1100;50
 
 # ============ QUARTIER SUD ============
-# Rue Saint Michel (verticale sud)
+# Rue Saint Michel (verticale sud) - DOUBLE SENS
 Rue Saint Michel;Carrefour Liberté;Maison Panthéon;500;500;500;650
+Rue Saint Michel;Maison Panthéon;Carrefour Liberté;500;650;500;500
 Rue Saint Michel;Maison Panthéon;Carrefour Luxembourg;500;650;500;800
+Rue Saint Michel;Carrefour Luxembourg;Maison Panthéon;500;800;500;650
 Rue Saint Michel;Carrefour Luxembourg;Immeuble Tour Montparnasse;500;800;500;950
+Rue Saint Michel;Immeuble Tour Montparnasse;Carrefour Luxembourg;500;950;500;800
 Rue Saint Michel;Immeuble Tour Montparnasse;Maison Notre Dame;500;950;500;1100
+Rue Saint Michel;Maison Notre Dame;Immeuble Tour Montparnasse;500;1100;500;950
 
-# Boulevard Sud (horizontale basse)
+# Boulevard Sud (horizontale basse) - DOUBLE SENS
 Boulevard Sud;Carrefour Luxembourg;Maison Jardin;500;800;700;800
+Boulevard Sud;Maison Jardin;Carrefour Luxembourg;700;800;500;800
 Boulevard Sud;Maison Jardin;Carrefour Invalides;700;800;900;800
+Boulevard Sud;Carrefour Invalides;Maison Jardin;900;800;700;800
 Boulevard Sud;Carrefour Invalides;Immeuble Résidence Sud;900;800;1100;800
+Boulevard Sud;Immeuble Résidence Sud;Carrefour Invalides;1100;800;900;800
 Boulevard Sud;Immeuble Résidence Sud;Carrefour Bastille;1100;800;1200;800
+Boulevard Sud;Carrefour Bastille;Immeuble Résidence Sud;1200;800;1100;800
 
-# Rue de Rivoli (diagonale sud-est)
+# Rue de Rivoli (diagonale sud-est) - DOUBLE SENS
 Rue de Rivoli;Carrefour Nation;Carrefour Invalides;800;500;900;800
+Rue de Rivoli;Carrefour Invalides;Carrefour Nation;900;800;800;500
 Rue de Rivoli;Carrefour Invalides;Maison Louvre;900;800;1000;900
+Rue de Rivoli;Maison Louvre;Carrefour Invalides;1000;900;900;800
 
 # ============ QUARTIER EST ============
-# Avenue Est (verticale est)
+# Avenue Est (verticale est) - DOUBLE SENS
 Avenue Est;Carrefour Nation;Immeuble Bercy;800;500;800;350
+Avenue Est;Immeuble Bercy;Carrefour Nation;800;350;800;500
 Avenue Est;Immeuble Bercy;Carrefour Gare de Lyon;800;350;800;200
+Avenue Est;Carrefour Gare de Lyon;Immeuble Bercy;800;200;800;350
 Avenue Est;Carrefour Gare de Lyon;Maison Place de la République;800;200;800;100
+Avenue Est;Maison Place de la République;Carrefour Gare de Lyon;800;100;800;200
 Avenue Est;Maison Place de la République;Carrefour Belleville;800;100;800;0
+Avenue Est;Carrefour Belleville;Maison Place de la République;800;0;800;100
 
-# Rue de la Roquette (horizontale est)
+# Rue de la Roquette (horizontale est) - DOUBLE SENS
 Rue de la Roquette;Carrefour Victor Hugo;Maison Voltaire;1100;500;1300;500
+Rue de la Roquette;Maison Voltaire;Carrefour Victor Hugo;1300;500;1100;500
 Rue de la Roquette;Maison Voltaire;Carrefour Père Lachaise;1300;500;1500;500
+Rue de la Roquette;Carrefour Père Lachaise;Maison Voltaire;1500;500;1300;500
 Rue de la Roquette;Carrefour Père Lachaise;Immeuble Résidence Est;1500;500;1600;500
+Rue de la Roquette;Immeuble Résidence Est;Carrefour Père Lachaise;1600;500;1500;500
 
-# Boulevard de Belleville (nord-est)
+# Boulevard de Belleville (nord-est) - DOUBLE SENS
 Boulevard de Belleville;Carrefour Belleville;Maison Buttes Chaumont;800;0;1000;0
+Boulevard de Belleville;Maison Buttes Chaumont;Carrefour Belleville;1000;0;800;0
 Boulevard de Belleville;Maison Buttes Chaumont;Carrefour Colonel Fabien;1000;0;1200;0
+Boulevard de Belleville;Carrefour Colonel Fabien;Maison Buttes Chaumont;1200;0;1000;0
 Boulevard de Belleville;Carrefour Colonel Fabien;Immeuble Le Moderne;1200;0;1400;0
+Boulevard de Belleville;Immeuble Le Moderne;Carrefour Colonel Fabien;1400;0;1200;0
 
 # ============ QUARTIER OUEST ============
-# Rue Transversale (diagonale ouest)
+# Rue Transversale (diagonale ouest) - DOUBLE SENS
 Rue Transversale;Carrefour République;Maison Marais;200;500;100;400
+Rue Transversale;Maison Marais;Carrefour République;100;400;200;500
 Rue Transversale;Maison Marais;Carrefour Saint Germain;100;400;0;300
+Rue Transversale;Carrefour Saint Germain;Maison Marais;0;300;100;400
 
-# Avenue de Neuilly (horizontale ouest)
+# Avenue de Neuilly (horizontale ouest) - DOUBLE SENS
 Avenue de Neuilly;Carrefour Opéra;Immeuble La Défense;200;200;0;200
+Avenue de Neuilly;Immeuble La Défense;Carrefour Opéra;0;200;200;200
 Avenue de Neuilly;Immeuble La Défense;Maison Porte Maillot;0;200;-100;200
+Avenue de Neuilly;Maison Porte Maillot;Immeuble La Défense;-100;200;0;200
 
-# Rue du Faubourg (verticale ouest)
+# Rue du Faubourg (verticale ouest) - DOUBLE SENS
 Rue du Faubourg;Carrefour Saint Germain;Maison Invalides Ouest;0;300;0;500
+Rue du Faubourg;Maison Invalides Ouest;Carrefour Saint Germain;0;500;0;300
 Rue du Faubourg;Maison Invalides Ouest;Entrepot Base;0;500;0;500
+Rue du Faubourg;Entrepot Base;Maison Invalides Ouest;0;500;0;500
 
 # ============ CONNEXIONS SUPPLÉMENTAIRES ============
-# Rue Circulaire Nord (connexions entre quartiers)
+# Rue Circulaire Nord (connexions entre quartiers) - DOUBLE SENS
 Rue Circulaire Nord;Carrefour Champs Elysées;Carrefour Gare de Lyon;600;200;800;200
+Rue Circulaire Nord;Carrefour Gare de Lyon;Carrefour Champs Elysées;800;200;600;200
 Rue Circulaire Nord;Carrefour Gare de Lyon;Carrefour Concorde;800;200;1000;200
+Rue Circulaire Nord;Carrefour Concorde;Carrefour Gare de Lyon;1000;200;800;200
 
-# Rue Circulaire Sud (connexions sud)
+# Rue Circulaire Sud (connexions sud) - DOUBLE SENS
 Rue Circulaire Sud;Carrefour Luxembourg;Maison Denfert;500;800;600;900
+Rue Circulaire Sud;Maison Denfert;Carrefour Luxembourg;600;900;500;800
 Rue Circulaire Sud;Maison Denfert;Carrefour Invalides;600;900;700;800
+Rue Circulaire Sud;Carrefour Invalides;Maison Denfert;700;800;600;900
 
-# Avenue Traversante (connexion est-ouest)
+# Avenue Traversante (connexion est-ouest) - DOUBLE SENS
 Avenue Traversante;Carrefour Concorde;Carrefour Victor Hugo;1000;200;1100;500
+Avenue Traversante;Carrefour Victor Hugo;Carrefour Concorde;1100;500;1000;200
 Avenue Traversante;Carrefour Victor Hugo;Carrefour Bastille;1100;500;1200;800
+Avenue Traversante;Carrefour Bastille;Carrefour Victor Hugo;1200;800;1100;500
 
 # ============ ZONE RÉSIDENTIELLE NORD-OUEST ============
+# Rue des Fleurs - DOUBLE SENS (petite rue 1 voie)
 Rue des Fleurs;Carrefour Opéra;Maison Rose;200;200;150;150
+Rue des Fleurs;Maison Rose;Carrefour Opéra;150;150;200;200
 Rue des Fleurs;Maison Rose;Immeuble Les Lilas;150;150;100;100
+Rue des Fleurs;Immeuble Les Lilas;Maison Rose;100;100;150;150
 Rue des Fleurs;Immeuble Les Lilas;Maison Tulipe;100;100;50;50
+Rue des Fleurs;Maison Tulipe;Immeuble Les Lilas;50;50;100;100
 
+# Rue des Arbres - DOUBLE SENS
 Rue des Arbres;Maison Rose;Maison Chêne;150;150;250;100
+Rue des Arbres;Maison Chêne;Maison Rose;250;100;150;150
 Rue des Arbres;Maison Chêne;Carrefour Madeleine;250;100;700;100
+Rue des Arbres;Carrefour Madeleine;Maison Chêne;700;100;250;100
 
 # ============ ZONE RÉSIDENTIELLE SUD-EST ============
+# Rue des Oiseaux - DOUBLE SENS
 Rue des Oiseaux;Carrefour Invalides;Maison Hirondelle;900;800;950;850
+Rue des Oiseaux;Maison Hirondelle;Carrefour Invalides;950;850;900;800
 Rue des Oiseaux;Maison Hirondelle;Immeuble Les Colombes;950;850;1000;900
+Rue des Oiseaux;Immeuble Les Colombes;Maison Hirondelle;1000;900;950;850
 Rue des Oiseaux;Immeuble Les Colombes;Maison Rossignol;1000;900;1050;950
+Rue des Oiseaux;Maison Rossignol;Immeuble Les Colombes;1050;950;1000;900
 
+# Rue de la Paix - DOUBLE SENS
 Rue de la Paix;Maison Rossignol;Immeuble Belle Époque;1050;950;1100;1000
+Rue de la Paix;Immeuble Belle Époque;Maison Rossignol;1100;1000;1050;950
 Rue de la Paix;Immeuble Belle Époque;Carrefour Bastille;1100;1000;1100;800
+Rue de la Paix;Carrefour Bastille;Immeuble Belle Époque;1100;800;1100;1000
 
 # ============ ZONE COMMERCIALE EST ============
+# Boulevard Commerce - SENS UNIQUE (vers l'est)
 Boulevard Commerce;Carrefour Père Lachaise;Immeuble Centre Commercial;1500;500;1550;450
 Boulevard Commerce;Immeuble Centre Commercial;Maison Boutique;1550;450;1600;400
 Boulevard Commerce;Maison Boutique;Carrefour Marché;1600;400;1650;350
 
+# Rue Marchande - SENS UNIQUE (vers l'est)
 Rue Marchande;Carrefour Marché;Immeuble Galeries;1650;350;1700;300
 Rue Marchande;Immeuble Galeries;Maison Epicerie;1700;300;1750;250
 
 # ============ ZONE INDUSTRIELLE NORD ============
+# Rue Industrielle - DOUBLE SENS
 Rue Industrielle;Carrefour Colonel Fabien;Immeuble Usine Nord;1200;0;1300;-50
+Rue Industrielle;Immeuble Usine Nord;Carrefour Colonel Fabien;1300;-50;1200;0
 Rue Industrielle;Immeuble Usine Nord;Maison Atelier;1300;-50;1400;-100
+Rue Industrielle;Maison Atelier;Immeuble Usine Nord;1400;-100;1300;-50
 
+# Rue des Entrepôts - DOUBLE SENS
 Rue des Entrepôts;Carrefour Trocadéro;Immeuble Stock Nord;1200;50;1300;0
+Rue des Entrepôts;Immeuble Stock Nord;Carrefour Trocadéro;1300;0;1200;50
 Rue des Entrepôts;Immeuble Stock Nord;Carrefour Colonel Fabien;1300;0;1200;0
+Rue des Entrepôts;Carrefour Colonel Fabien;Immeuble Stock Nord;1200;0;1300;0
 
 # ============ QUARTIER PARC CENTRAL ============
+# Allée des Jardins - DOUBLE SENS (petite allée)
 Allée des Jardins;Carrefour Liberté;Maison Parc;500;500;550;550
+Allée des Jardins;Maison Parc;Carrefour Liberté;550;550;500;500
 Allée des Jardins;Maison Parc;Immeuble Vue Parc;550;550;600;600
+Allée des Jardins;Immeuble Vue Parc;Maison Parc;600;600;550;550
 Allée des Jardins;Immeuble Vue Parc;Carrefour Luxembourg;600;600;500;800
+Allée des Jardins;Carrefour Luxembourg;Immeuble Vue Parc;500;800;600;600
 
+# Promenade Verte - DOUBLE SENS (petite promenade)
 Promenade Verte;Carrefour Nation;Maison Fontaine;800;500;750;550
+Promenade Verte;Maison Fontaine;Carrefour Nation;750;550;800;500
 Promenade Verte;Maison Fontaine;Immeuble Les Saules;750;550;700;600
+Promenade Verte;Immeuble Les Saules;Maison Fontaine;700;600;750;550
 Promenade Verte;Immeuble Les Saules;Carrefour Luxembourg;700;600;500;800
+Promenade Verte;Carrefour Luxembourg;Immeuble Les Saules;500;800;700;600
 
 # ============ BOULEVARD PÉRIPHÉRIQUE (anneau extérieur) ============
+# Périphérique - DOUBLE SENS (route rapide)
 Périphérique Nord;Maison Arc de Triomphe;Carrefour Belleville;200;0;800;0
+Périphérique Nord;Carrefour Belleville;Maison Arc de Triomphe;800;0;200;0
 Périphérique Est;Carrefour Belleville;Immeuble Le Moderne;800;0;1400;0
+Périphérique Est;Immeuble Le Moderne;Carrefour Belleville;1400;0;800;0
 Périphérique Sud Est;Carrefour Bastille;Maison Louvre;1200;800;1000;900
+Périphérique Sud Est;Maison Louvre;Carrefour Bastille;1000;900;1200;800
 Périphérique Sud;Maison Notre Dame;Carrefour Luxembourg;500;1100;500;800
+Périphérique Sud;Carrefour Luxembourg;Maison Notre Dame;500;800;500;1100
 Périphérique Ouest;Maison Porte Maillot;Carrefour Saint Germain;-100;200;0;300
+Périphérique Ouest;Carrefour Saint Germain;Maison Porte Maillot;0;300;-100;200
